@@ -21,6 +21,7 @@
 		A8CE0F9D26A31820003147EE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		A8CE0F9F26A31820003147EE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A8CE0FA026A31820003147EE /* Noonecares.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Noonecares.entitlements; sourceTree = "<group>"; };
+		A8CE0FA726A3185A003147EE /* noonecares.ino */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = noonecares.ino; path = hardware/noonecares/noonecares.ino; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -37,6 +38,7 @@
 		A8CE0F8A26A3181C003147EE = {
 			isa = PBXGroup;
 			children = (
+				A8CE0FA726A3185A003147EE /* noonecares.ino */,
 				A8CE0F9526A3181C003147EE /* Noonecares */,
 				A8CE0F9426A3181C003147EE /* Products */,
 			);
