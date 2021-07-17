@@ -11,6 +11,7 @@
 		A8CE0F9926A3181C003147EE /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8CE0F9826A3181C003147EE /* ViewController.swift */; };
 		A8CE0F9B26A31820003147EE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A8CE0F9A26A31820003147EE /* Assets.xcassets */; };
 		A8CE0F9E26A31820003147EE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A8CE0F9C26A31820003147EE /* Main.storyboard */; };
+		A8CE0FAA26A31EDA003147EE /* MenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8CE0FA926A31EDA003147EE /* MenuViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +23,7 @@
 		A8CE0F9F26A31820003147EE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A8CE0FA026A31820003147EE /* Noonecares.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Noonecares.entitlements; sourceTree = "<group>"; };
 		A8CE0FA726A3185A003147EE /* noonecares.ino */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = noonecares.ino; path = hardware/noonecares/noonecares.ino; sourceTree = "<group>"; };
+		A8CE0FA926A31EDA003147EE /* MenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,6 +61,7 @@
 				A8CE0F9826A3181C003147EE /* ViewController.swift */,
 				A8CE0F9A26A31820003147EE /* Assets.xcassets */,
 				A8CE0F9C26A31820003147EE /* Main.storyboard */,
+				A8CE0FA926A31EDA003147EE /* MenuViewController.swift */,
 				A8CE0F9F26A31820003147EE /* Info.plist */,
 				A8CE0FA026A31820003147EE /* Noonecares.entitlements */,
 			);
@@ -135,6 +138,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A8CE0F9926A3181C003147EE /* ViewController.swift in Sources */,
+				A8CE0FAA26A31EDA003147EE /* MenuViewController.swift in Sources */,
 				A8CE0F9726A3181C003147EE /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
