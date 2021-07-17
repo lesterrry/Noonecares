@@ -8,22 +8,26 @@
 
 /* Begin PBXBuildFile section */
 		A8CE0F9726A3181C003147EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8CE0F9626A3181C003147EE /* AppDelegate.swift */; };
-		A8CE0F9926A3181C003147EE /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8CE0F9826A3181C003147EE /* ViewController.swift */; };
 		A8CE0F9B26A31820003147EE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A8CE0F9A26A31820003147EE /* Assets.xcassets */; };
 		A8CE0F9E26A31820003147EE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A8CE0F9C26A31820003147EE /* Main.storyboard */; };
 		A8CE0FAA26A31EDA003147EE /* MenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8CE0FA926A31EDA003147EE /* MenuViewController.swift */; };
+		A8CE0FAF26A3297C003147EE /* MatrixViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8CE0FAD26A3297C003147EE /* MatrixViewController.swift */; };
+		A8CE0FB026A3297C003147EE /* MatrixCollectionViewItem.xib in Resources */ = {isa = PBXBuildFile; fileRef = A8CE0FAE26A3297C003147EE /* MatrixCollectionViewItem.xib */; };
+		A8CE0FB426A33049003147EE /* MatrixCollectionViewItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8CE0FB226A33049003147EE /* MatrixCollectionViewItem.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		A8CE0F9326A3181C003147EE /* Noonecares.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Noonecares.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A8CE0F9626A3181C003147EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		A8CE0F9826A3181C003147EE /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		A8CE0F9A26A31820003147EE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A8CE0F9D26A31820003147EE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		A8CE0F9F26A31820003147EE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A8CE0FA026A31820003147EE /* Noonecares.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Noonecares.entitlements; sourceTree = "<group>"; };
 		A8CE0FA726A3185A003147EE /* noonecares.ino */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = noonecares.ino; path = hardware/noonecares/noonecares.ino; sourceTree = "<group>"; };
 		A8CE0FA926A31EDA003147EE /* MenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuViewController.swift; sourceTree = "<group>"; };
+		A8CE0FAD26A3297C003147EE /* MatrixViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatrixViewController.swift; sourceTree = "<group>"; };
+		A8CE0FAE26A3297C003147EE /* MatrixCollectionViewItem.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MatrixCollectionViewItem.xib; sourceTree = "<group>"; };
+		A8CE0FB226A33049003147EE /* MatrixCollectionViewItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatrixCollectionViewItem.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,10 +62,12 @@
 			isa = PBXGroup;
 			children = (
 				A8CE0F9626A3181C003147EE /* AppDelegate.swift */,
-				A8CE0F9826A3181C003147EE /* ViewController.swift */,
 				A8CE0F9A26A31820003147EE /* Assets.xcassets */,
 				A8CE0F9C26A31820003147EE /* Main.storyboard */,
 				A8CE0FA926A31EDA003147EE /* MenuViewController.swift */,
+				A8CE0FB226A33049003147EE /* MatrixCollectionViewItem.swift */,
+				A8CE0FAD26A3297C003147EE /* MatrixViewController.swift */,
+				A8CE0FAE26A3297C003147EE /* MatrixCollectionViewItem.xib */,
 				A8CE0F9F26A31820003147EE /* Info.plist */,
 				A8CE0FA026A31820003147EE /* Noonecares.entitlements */,
 			);
@@ -127,6 +133,7 @@
 			files = (
 				A8CE0F9B26A31820003147EE /* Assets.xcassets in Resources */,
 				A8CE0F9E26A31820003147EE /* Main.storyboard in Resources */,
+				A8CE0FB026A3297C003147EE /* MatrixCollectionViewItem.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -137,7 +144,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A8CE0F9926A3181C003147EE /* ViewController.swift in Sources */,
+				A8CE0FB426A33049003147EE /* MatrixCollectionViewItem.swift in Sources */,
+				A8CE0FAF26A3297C003147EE /* MatrixViewController.swift in Sources */,
 				A8CE0FAA26A31EDA003147EE /* MenuViewController.swift in Sources */,
 				A8CE0F9726A3181C003147EE /* AppDelegate.swift in Sources */,
 			);

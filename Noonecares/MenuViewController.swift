@@ -14,6 +14,20 @@ class MenuViewController: NSViewController {
         // Do view setup here.
     }
     
+    override var representedObject: Any? {
+        didSet {
+        // Update the view, if already loaded.
+        }
+    }
+    
+    @IBAction func matrixButtonPressed(_ sender: Any) {
+        let myWindowController = NSStoryboard(name: "Main", bundle: nil).instantiateController(withIdentifier: "MatrixWindowController") as! NSWindowController
+        myWindowController.showWindow(self)
+    }
+    
+    @IBAction func quitButtonPressed(_ sender: Any) {
+        exit(0)
+    }
 }
 
 extension MenuViewController {
