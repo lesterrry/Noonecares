@@ -8,16 +8,16 @@
 import Cocoa
 
 class MatrixCollectionViewItem: NSCollectionViewItem {
+
+    @IBOutlet weak var colorWell: NSColorWell!
+    @IBAction func colorSelected(_ sender: Any) {
+        let index = MatrixViewController.colorWellKeys.firstIndex(of: (sender as! NSColorWell).hash)
+    }
     
     var index: Int! {
         didSet {
             MatrixViewController.colorWellKeys.append(colorWell.hash)
         }
-    }
-
-    @IBOutlet weak var colorWell: NSColorWell!
-    @IBAction func colorSelected(_ sender: Any) {
-        let index = MatrixViewController.colorWellKeys.firstIndex(of: (sender as! NSColorWell).hash)
     }
     override func viewDidLoad() {
         super.viewDidLoad()

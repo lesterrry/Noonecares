@@ -16,6 +16,12 @@ class MatrixViewController: NSViewController {
     @IBAction func drawButtonPressed(_ sender: Any) {
         print(MatrixViewController.colorWellKeys)
     }
+    @IBAction func saveButtonPressed(_ sender: Any) {
+        
+    }
+    @IBAction func copyButtonPressed(_ sender: Any) {
+        
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
