@@ -5,20 +5,22 @@
   Noonecares –
   A 72x6 LED MATRIX NO ONE CARES ABOUT
 
-  MAIN SCRIPT
+  MAIN HARDWARE SCRIPT
 
   VERSION 0.1.0
 ***************************/
 
-#include <Adafruit_GFX.h>
-#include <Adafruit_NeoMatrix.h>
-#include <Adafruit_NeoPixel.h>
-#include <Fonts/Org_01.h>
+// External modules
+#include <Adafruit_GFX.h>                    // Graphics
+#include <Adafruit_NeoMatrix.h>              // Matrix controls
+#include <Adafruit_NeoPixel.h>               // LED strip controls
+#include <Fonts/Org_01.h>                    // Main font
 
-#define NUM_LEDS 432
-#define LED_PIN 6
-#define LED_MIN_BRT 4
-#define CMD_ARGS_COUNT 5
+// Compile-time parameters
+#define LED_COUNT 432                        // Number of LEDs in the matrix
+#define LED_PIN 6                            // Pin matrix is connected to
+#define LED_MIN_BRT 4                        // Lowest possible LEDs brightness
+#define CMD_ARGS_COUNT 5                     // Maximum number of command arguments
 
 // Reserved keywords
 #define EXISTS_KEYWORD "%IS%"
@@ -26,15 +28,15 @@
 #define CHAR_RANDOM_KEYWORD "%CHRND%"
 #define TAILLIGHT_KEYWORD "%TLL%"
 
-int routineTask = 0;  // Long-lasting task to do as a routine
-int cachedMatrixBrightness = 30;  // Brightness of matrix to revert to
-int counter = 0;  // Int which controls longer (than 0.1sec) routines
-uint32_t timer;  // Main routine timer
-String cachedCommandName = "";  // Name of a command to execute in a routine
+// Variables
+int routineTask = 0;                          // Long-lasting task to do as a routine
+int cachedMatrixBrightness = 30;              // Brightness of matrix to revert to
+int counter = 0;                              // Int which controls longer (than 0.1sec) routines
+uint32_t timer;                               // Main routine timer
+String cachedCommandName = "";                // Name of a command to execute in a routine
 String cachedCommandArgs[CMD_ARGS_COUNT][2];  // Arguments of a command to execute in a routine
-String currentCharSequence = "";  // Current sequence of displayed characters
-bool inoutInDone = false;  // True if inout animation bounces back
-bool timeWasSet = false;  // True if time was set
+String currentCharSequence = "";              // Current sequence of displayed characters
+bool inoutInDone = false;                     // True if inout animation bounces back
 
 Adafruit_NeoMatrix matrix = Adafruit_NeoMatrix(
                               72,
@@ -66,16 +68,16 @@ void setup() {
 }
 
 void loop() {
-    if (Serial.available() > 0) {  // Receive data over serial
+    if (Serial.available() > 0) {             // Receive data over serial
         handleCommand(Serial.readStringUntil('/'));
     }
-    if (millis() - timer > 100) {  // Main timer routine (0.1sec)
+    if (millis() - timer > 100) {             // Main timer routine (0.1sec)
         counter += 1;
         switch (routineTask) {
-            case 0:  // No task
+            case 0:                           // No task
                 break;
-            case 2:  // Clock display
-                if (counter < 9) { break; }
+            case 2:                           // Clock display
+                if (counter < 8) { break; }
                 counter = 0;
                 matrix.clear();
                 matrix.setCursor(7, 5);
@@ -87,8 +89,8 @@ void loop() {
                 matrix.print(second());
                 matrix.show();
                 break;
-            case 1:  // Inout animation MARK: There's something wrong with this switch/case.
-                Serial.println("C");
+            case 1:                           // Inout animation MARK: This case behaves weird
+            {
                 float b = matrix.getBrightness();
                 if (cachedCommandName != "" && b >= 5 && !inoutInDone) {
                     float a = (b / 100) * 50;
@@ -109,6 +111,10 @@ void loop() {
                     inoutInDone = false;
                 }
                 break;
+            }
+            default:                          // TODO: Check that it is being executed
+                reportError("rounot", "032");
+                routineTask = 0;
         }
         if (counter > 1000) {
             counter = 0;
@@ -193,7 +199,7 @@ void refillArgsArray(String args[CMD_ARGS_COUNT][2]) {
 }
 
 void executeCommand(String name, String args[CMD_ARGS_COUNT][2]) {
-    if (name == "RTX") {  // Just print text
+    if (name == "RTX") {                      // Just print text
         String text = getArgumentValue(args, "t");
         String scolor = getArgumentValue(args, "c");
         if (text == "" || scolor == "") {
@@ -202,7 +208,7 @@ void executeCommand(String name, String args[CMD_ARGS_COUNT][2]) {
         }
         uint16_t colors = getColors(scolor);
         safePrint(text, colors);
-    } else if (name == "ACH") {  // Append char (!!!) to currently displayed text
+    } else if (name == "ACH") {               // Append char (!!!) to currently displayed text
         String character = getArgumentValue(args, "h");
         String scolor = getArgumentValue(args, "c");
         if (character == "" || scolor == "") {
@@ -219,16 +225,10 @@ void executeCommand(String name, String args[CMD_ARGS_COUNT][2]) {
         }
         currentCharSequence += character;
         safePrint(currentCharSequence, colors);
-    } else if (name == "CLR") {  // Clear the matrix
+    } else if (name == "CLR") {               // Clear the matrix
         matrix.fillScreen(0);
         matrix.show();
-    } else if (name == "CLK") {  // Clear the matrix
-        if (timeWasSet) {
-            routineTask = 2;
-        } else {
-            reportError("timenot", "051");
-        }
-    } else if (name == "TME") {  // Set the time
+    } else if (name == "CLK") {               // Enter clock mode
         String time = getArgumentValue(args, "t");
         if (time == "") {
             reportError("argnot", "021");
@@ -255,8 +255,8 @@ void executeCommand(String name, String args[CMD_ARGS_COUNT][2]) {
         }
         time = "";
         setTime(values[0], values[1], values[2], values[3], values[4], values[5]);
-        timeWasSet = true;
-    } else if (name == "BRT") {  // Adjust brightness
+        routineTask = 2;
+    } else if (name == "BRT") {               // Adjust brightness
         int v = getArgumentValue(args, "v").toInt();
         matrix.setBrightness(v);
         matrix.show();

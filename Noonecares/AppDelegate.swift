@@ -7,7 +7,7 @@
 
 import Cocoa
 
-@main
+@NSApplicationMain //MARK: Xcode versions conflict
 class AppDelegate: NSObject, NSApplicationDelegate {
 
     let statusItem = NSStatusBar.system.statusItem(withLength:NSStatusItem.squareLength)
@@ -16,8 +16,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         // Insert code here to initialize your application
         if let button = statusItem.button {
-          button.image = NSImage(named:NSImage.Name("NoOneLogo"))
-          button.action = #selector(togglePopover(_:))
+            // MARK: 'NoOneLogo' changed to 'noonelogo' in Assets
+            button.image = NSImage(named:NSImage.Name("noonelogo"))
+            button.action = #selector(togglePopover(_:))
         }
         popover.contentViewController = MenuViewController.freshController()
     }
