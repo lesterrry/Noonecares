@@ -194,7 +194,7 @@
                                                                 <constraints>
                                                                     <constraint firstAttribute="width" constant="75" id="Had-Cw-8fV"/>
                                                                 </constraints>
-                                                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" placeholderString="Text" drawsBackground="YES" id="EbF-0T-Tcj">
+                                                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" enabled="NO" sendsActionOnEndEditing="YES" borderStyle="bezel" placeholderString="Text" drawsBackground="YES" id="EbF-0T-Tcj">
                                                                     <font key="font" metaFont="system"/>
                                                                     <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -202,7 +202,7 @@
                                                             </textField>
                                                             <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="cQK-xf-Flr">
                                                                 <rect key="frame" x="74" y="-2" width="113" height="25"/>
-                                                                <popUpButtonCell key="cell" type="push" title="Color" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" arrowPosition="noArrow" selectedItem="eHy-9Y-WBq" id="IVK-PL-dxw">
+                                                                <popUpButtonCell key="cell" type="push" title="Color" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" enabled="NO" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" arrowPosition="noArrow" selectedItem="eHy-9Y-WBq" id="IVK-PL-dxw">
                                                                     <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                                                     <font key="font" metaFont="menu"/>
                                                                     <menu key="menu" id="8Bs-pD-hcT">
@@ -223,7 +223,7 @@
                                                                     </menu>
                                                                 </popUpButtonCell>
                                                             </popUpButton>
-                                                            <colorWell translatesAutoresizingMaskIntoConstraints="NO" id="WBQ-zf-rod">
+                                                            <colorWell enabled="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WBQ-zf-rod">
                                                                 <rect key="frame" x="186" y="0.0" width="44" height="23"/>
                                                                 <constraints>
                                                                     <constraint firstAttribute="width" constant="44" id="ugR-Hv-SaU"/>
@@ -261,7 +261,7 @@
                                                 <subviews>
                                                     <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="lAc-zh-Lyj">
                                                         <rect key="frame" x="-2" y="0.0" width="142" height="24"/>
-                                                        <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="36n-I0-N5a">
+                                                        <segmentedCell key="cell" enabled="NO" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="36n-I0-N5a">
                                                             <font key="font" metaFont="system"/>
                                                             <segments>
                                                                 <segment label="Static" selected="YES"/>
@@ -269,16 +269,12 @@
                                                                 <segment label="Scroll"/>
                                                             </segments>
                                                         </segmentedCell>
+                                                        <connections>
+                                                            <action selector="textModeAnimationSegmentedControlValueChanged:" target="XfG-lQ-9wD" id="5as-Lo-2Ks"/>
+                                                        </connections>
                                                     </segmentedControl>
-                                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hQb-nu-53K">
-                                                        <rect key="frame" x="173" y="3" width="56" height="18"/>
-                                                        <buttonCell key="cell" type="check" title="Fade" bezelStyle="regularSquare" imagePosition="left" inset="2" id="TVP-zf-hlb">
-                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                            <font key="font" metaFont="system"/>
-                                                        </buttonCell>
-                                                    </button>
                                                     <stackView distribution="fillEqually" orientation="horizontal" alignment="centerY" spacing="6" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pwG-W5-FUZ" userLabel="Animation Delay Controls Stack View">
-                                                        <rect key="frame" x="263" y="0.0" width="89" height="23"/>
+                                                        <rect key="frame" x="172" y="0.0" width="94" height="23"/>
                                                         <subviews>
                                                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="cIp-p4-6Sb">
                                                                 <rect key="frame" x="-2" y="4" width="38" height="16"/>
@@ -296,10 +292,10 @@
                                                                 </connections>
                                                             </slider>
                                                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="sMR-r3-EKo" userLabel="Speed">
-                                                                <rect key="frame" x="68" y="4" width="23" height="16"/>
+                                                                <rect key="frame" x="68" y="4" width="28" height="16"/>
                                                                 <textFieldCell key="cell" lineBreakMode="clipping" title="30" id="B7T-1D-YQr">
                                                                     <font key="font" metaFont="system"/>
-                                                                    <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                                                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                                 </textFieldCell>
                                                             </textField>
@@ -315,6 +311,13 @@
                                                             <real value="3.4028234663852886e+38"/>
                                                         </customSpacing>
                                                     </stackView>
+                                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hQb-nu-53K">
+                                                        <rect key="frame" x="298" y="3" width="56" height="18"/>
+                                                        <buttonCell key="cell" type="check" title="Fade" bezelStyle="regularSquare" imagePosition="left" enabled="NO" inset="2" id="TVP-zf-hlb">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                    </button>
                                                 </subviews>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="23" id="Dwb-mJ-NJJ"/>
@@ -344,8 +347,11 @@
                                                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                                 </textFieldCell>
                                                             </textField>
-                                                            <switch horizontalHuggingPriority="750" verticalHuggingPriority="750" baseWritingDirection="leftToRight" alignment="left" translatesAutoresizingMaskIntoConstraints="NO" id="IbR-b5-1uG">
+                                                            <switch horizontalHuggingPriority="750" verticalHuggingPriority="750" enabled="NO" baseWritingDirection="leftToRight" alignment="left" translatesAutoresizingMaskIntoConstraints="NO" id="IbR-b5-1uG">
                                                                 <rect key="frame" x="38" y="-2" width="42" height="25"/>
+                                                                <connections>
+                                                                    <action selector="textModeCycleSwitchSwitched:" target="XfG-lQ-9wD" id="Mhj-48-7fm"/>
+                                                                </connections>
                                                             </switch>
                                                         </subviews>
                                                         <visibilityPriorities>
@@ -373,7 +379,7 @@
                                                             </textField>
                                                             <stepper horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="cZK-lm-ARd">
                                                                 <rect key="frame" x="27" y="-4" width="19" height="28"/>
-                                                                <stepperCell key="cell" continuous="YES" alignment="left" maxValue="100" id="EaQ-Dw-KsC"/>
+                                                                <stepperCell key="cell" continuous="YES" enabled="NO" alignment="left" maxValue="100" id="EaQ-Dw-KsC"/>
                                                                 <connections>
                                                                     <action selector="textModeCycleStepsStepperValueChanged:" target="XfG-lQ-9wD" id="Bu5-An-Y06"/>
                                                                 </connections>
@@ -387,7 +393,7 @@
                                                                             <constraint firstAttribute="height" constant="15" id="lwF-LK-CW6"/>
                                                                             <constraint firstAttribute="width" constant="15" id="n5P-Q8-HgY"/>
                                                                         </constraints>
-                                                                        <buttonCell key="cell" type="smallSquare" bezelStyle="smallSquare" image="NSAddTemplate" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="mEu-dI-APw">
+                                                                        <buttonCell key="cell" type="smallSquare" bezelStyle="smallSquare" image="NSAddTemplate" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" enabled="NO" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="mEu-dI-APw">
                                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                                             <font key="font" metaFont="system"/>
                                                                         </buttonCell>
@@ -401,7 +407,7 @@
                                                                             <constraint firstAttribute="height" constant="15" id="QUG-Ob-YgE"/>
                                                                             <constraint firstAttribute="width" constant="15" id="ayJ-Hx-5Hs"/>
                                                                         </constraints>
-                                                                        <buttonCell key="cell" type="smallSquare" bezelStyle="smallSquare" image="NSRemoveTemplate" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Zb3-nc-r3u">
+                                                                        <buttonCell key="cell" type="smallSquare" bezelStyle="smallSquare" image="NSRemoveTemplate" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" enabled="NO" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Zb3-nc-r3u">
                                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                                             <font key="font" metaFont="system"/>
                                                                         </buttonCell>
@@ -415,7 +421,7 @@
                                                                             <constraint firstAttribute="height" constant="15" id="Uhm-dj-6Nx"/>
                                                                             <constraint firstAttribute="width" constant="15" id="bPu-0J-IBG"/>
                                                                         </constraints>
-                                                                        <buttonCell key="cell" type="smallSquare" bezelStyle="smallSquare" image="NSStopProgressTemplate" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="bmt-N2-mbs">
+                                                                        <buttonCell key="cell" type="smallSquare" bezelStyle="smallSquare" image="NSStopProgressTemplate" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" enabled="NO" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="bmt-N2-mbs">
                                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                                             <font key="font" metaFont="system"/>
                                                                         </buttonCell>
@@ -463,7 +469,7 @@
                                                                 <constraints>
                                                                     <constraint firstAttribute="width" constant="30" id="Vqc-MN-cVx"/>
                                                                 </constraints>
-                                                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" title="10" placeholderString="sec" drawsBackground="YES" id="wPq-zl-cTm">
+                                                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" enabled="NO" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" title="10" placeholderString="sec" drawsBackground="YES" id="wPq-zl-cTm">
                                                                     <numberFormatter key="formatter" formatterBehavior="default10_4" usesGroupingSeparator="NO" formatWidth="-1" groupingSize="0" minimumIntegerDigits="1" maximumIntegerDigits="42" id="bnE-oO-tmg">
                                                                         <real key="minimum" value="1"/>
                                                                         <real key="maximum" value="10"/>
@@ -478,7 +484,7 @@
                                                             </textField>
                                                             <stepper horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="n9T-Ki-hSx">
                                                                 <rect key="frame" x="73" y="-3" width="19" height="28"/>
-                                                                <stepperCell key="cell" alignment="left" minValue="1" maxValue="120" doubleValue="10" autorepeat="NO" id="7PX-j4-6jA"/>
+                                                                <stepperCell key="cell" enabled="NO" alignment="left" minValue="1" maxValue="120" doubleValue="10" autorepeat="NO" id="7PX-j4-6jA"/>
                                                                 <connections>
                                                                     <action selector="textModeCycleDelayStepperValueChanged:" target="XfG-lQ-9wD" id="ACU-lc-Lbw"/>
                                                                 </connections>
@@ -514,8 +520,6 @@
                                         <constraints>
                                             <constraint firstItem="oEg-bu-7SJ" firstAttribute="leading" secondItem="fM5-Ta-kPb" secondAttribute="leading" id="2hp-6K-DzD"/>
                                             <constraint firstAttribute="trailing" secondItem="oEg-bu-7SJ" secondAttribute="trailing" id="HsI-PH-iah"/>
-                                            <constraint firstItem="lux-oZ-n5U" firstAttribute="trailing" secondItem="pwG-W5-FUZ" secondAttribute="trailing" id="IrA-W4-59h"/>
-                                            <constraint firstItem="lux-oZ-n5U" firstAttribute="leading" secondItem="pwG-W5-FUZ" secondAttribute="leading" id="Oik-gk-A0t"/>
                                             <constraint firstItem="zKG-tB-YpG" firstAttribute="leading" secondItem="fM5-Ta-kPb" secondAttribute="leading" id="Pfr-dw-bsc"/>
                                             <constraint firstAttribute="trailing" secondItem="zKG-tB-YpG" secondAttribute="trailing" id="TCd-0i-XJi"/>
                                             <constraint firstItem="y20-Yn-bN1" firstAttribute="leading" secondItem="fM5-Ta-kPb" secondAttribute="leading" id="TkS-Ki-o0t"/>
@@ -550,7 +554,7 @@
                                                 <subviews>
                                                     <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="d3M-Gw-1C1">
                                                         <rect key="frame" x="-6" y="-2" width="169" height="25"/>
-                                                        <popUpButtonCell key="cell" type="push" title="Color" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" arrowPosition="noArrow" selectedItem="8CQ-r3-chP" id="8lL-q3-jN6">
+                                                        <popUpButtonCell key="cell" type="push" title="Color" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" enabled="NO" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" arrowPosition="noArrow" selectedItem="8CQ-r3-chP" id="8lL-q3-jN6">
                                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                                             <font key="font" metaFont="menu"/>
                                                             <menu key="menu" id="ryu-re-Pg8">
@@ -571,7 +575,7 @@
                                                             </menu>
                                                         </popUpButtonCell>
                                                     </popUpButton>
-                                                    <colorWell translatesAutoresizingMaskIntoConstraints="NO" id="eyQ-DM-4LV">
+                                                    <colorWell enabled="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eyQ-DM-4LV">
                                                         <rect key="frame" x="162" y="0.0" width="44" height="23"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="23" id="31d-HA-C4s"/>
@@ -623,7 +627,7 @@
                                                 <subviews>
                                                     <comboBox verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="DZO-H8-I2l">
                                                         <rect key="frame" x="0.0" y="-3" width="107" height="25"/>
-                                                        <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" placeholderString="Saved File" drawsBackground="YES" usesDataSource="YES" numberOfVisibleItems="5" id="CJO-is-5NP">
+                                                        <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" enabled="NO" sendsActionOnEndEditing="YES" borderStyle="bezel" placeholderString="Saved File" drawsBackground="YES" usesDataSource="YES" numberOfVisibleItems="5" id="CJO-is-5NP">
                                                             <font key="font" metaFont="system"/>
                                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -689,7 +693,7 @@
                                                                 <constraints>
                                                                     <constraint firstAttribute="width" constant="30" id="UTv-TZ-Cbj"/>
                                                                 </constraints>
-                                                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" title="10" placeholderString="min" drawsBackground="YES" id="jCa-tX-mSh">
+                                                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" enabled="NO" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" title="10" placeholderString="min" drawsBackground="YES" id="jCa-tX-mSh">
                                                                     <numberFormatter key="formatter" formatterBehavior="default10_4" usesGroupingSeparator="NO" formatWidth="-1" groupingSize="0" minimumIntegerDigits="1" maximumIntegerDigits="42" id="SpS-nI-dkY">
                                                                         <real key="minimum" value="1"/>
                                                                         <real key="maximum" value="120"/>
@@ -704,7 +708,7 @@
                                                             </textField>
                                                             <stepper horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="38N-oi-Ah9">
                                                                 <rect key="frame" x="29" y="-3" width="19" height="28"/>
-                                                                <stepperCell key="cell" alignment="left" minValue="1" maxValue="120" doubleValue="10" autorepeat="NO" id="rcP-m5-OLM"/>
+                                                                <stepperCell key="cell" enabled="NO" alignment="left" minValue="1" maxValue="120" doubleValue="10" autorepeat="NO" id="rcP-m5-OLM"/>
                                                                 <connections>
                                                                     <action selector="timerModeStepperValueChanged:" target="XfG-lQ-9wD" id="jXN-RA-32M"/>
                                                                 </connections>
@@ -721,7 +725,7 @@
                                                     </stackView>
                                                     <slider verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Nl6-FX-yaa">
                                                         <rect key="frame" x="52" y="0.0" width="126" height="21"/>
-                                                        <sliderCell key="cell" state="on" alignment="left" minValue="1" maxValue="120" doubleValue="10" tickMarkPosition="above" sliderType="linear" id="aDQ-IF-ePt"/>
+                                                        <sliderCell key="cell" enabled="NO" state="on" alignment="left" minValue="1" maxValue="120" doubleValue="10" tickMarkPosition="above" sliderType="linear" id="aDQ-IF-ePt"/>
                                                         <connections>
                                                             <action selector="timerModeSliderValueChanged:" target="XfG-lQ-9wD" id="gs2-Hg-y3e"/>
                                                         </connections>
@@ -789,7 +793,7 @@
                                                                 <constraints>
                                                                     <constraint firstAttribute="width" constant="30" id="bCG-vO-ROi"/>
                                                                 </constraints>
-                                                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" title="10" placeholderString="min" drawsBackground="YES" id="NlB-xB-wtE">
+                                                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" enabled="NO" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" title="10" placeholderString="min" drawsBackground="YES" id="NlB-xB-wtE">
                                                                     <numberFormatter key="formatter" formatterBehavior="default10_4" usesGroupingSeparator="NO" formatWidth="-1" groupingSize="0" minimumIntegerDigits="1" maximumIntegerDigits="42" id="0it-wP-XTh">
                                                                         <real key="minimum" value="1"/>
                                                                         <real key="maximum" value="120"/>
@@ -804,7 +808,7 @@
                                                             </textField>
                                                             <stepper horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Cq4-dX-j46">
                                                                 <rect key="frame" x="63" y="-3" width="19" height="28"/>
-                                                                <stepperCell key="cell" alignment="left" minValue="1" maxValue="120" doubleValue="10" autorepeat="NO" id="X6u-8y-Ayf"/>
+                                                                <stepperCell key="cell" enabled="NO" alignment="left" minValue="1" maxValue="120" doubleValue="10" autorepeat="NO" id="X6u-8y-Ayf"/>
                                                                 <connections>
                                                                     <action selector="pomodoroModeWorkStepperValueChanged:" target="XfG-lQ-9wD" id="Qi3-Ns-qno"/>
                                                                 </connections>
@@ -840,7 +844,7 @@
                                                                 <constraints>
                                                                     <constraint firstAttribute="width" constant="30" id="Ry4-yj-Oss"/>
                                                                 </constraints>
-                                                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" title="10" placeholderString="min" drawsBackground="YES" id="bSl-G8-EMi">
+                                                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" enabled="NO" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" title="10" placeholderString="min" drawsBackground="YES" id="bSl-G8-EMi">
                                                                     <numberFormatter key="formatter" formatterBehavior="default10_4" usesGroupingSeparator="NO" formatWidth="-1" groupingSize="0" minimumIntegerDigits="1" maximumIntegerDigits="42" id="ocW-zK-KPW">
                                                                         <real key="minimum" value="1"/>
                                                                         <real key="maximum" value="120"/>
@@ -855,7 +859,7 @@
                                                             </textField>
                                                             <stepper horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="rgu-JZ-sC6">
                                                                 <rect key="frame" x="58" y="-3" width="19" height="28"/>
-                                                                <stepperCell key="cell" alignment="left" minValue="1" maxValue="120" doubleValue="10" autorepeat="NO" id="HCd-1g-TEM"/>
+                                                                <stepperCell key="cell" enabled="NO" alignment="left" minValue="1" maxValue="120" doubleValue="10" autorepeat="NO" id="HCd-1g-TEM"/>
                                                                 <connections>
                                                                     <action selector="pomodoroModeRestStepperValueChanged:" target="XfG-lQ-9wD" id="dpg-e6-FCC"/>
                                                                 </connections>
@@ -1056,6 +1060,9 @@
                         <outlet property="textModeColorWell" destination="WBQ-zf-rod" id="UFU-L2-kYF"/>
                         <outlet property="textModeCycleDelayStepper" destination="n9T-Ki-hSx" id="fyM-4Q-SOE"/>
                         <outlet property="textModeCycleDelayTextField" destination="JBr-yk-oRG" id="0Dh-eE-Bp0"/>
+                        <outlet property="textModeCycleStepAddButton" destination="MZG-G5-aUg" id="ZjD-i1-Gn0"/>
+                        <outlet property="textModeCycleStepClearButton" destination="rph-J8-9d0" id="7yI-h4-4o5"/>
+                        <outlet property="textModeCycleStepRemoveButton" destination="Zl3-XK-YVf" id="RhQ-4O-odn"/>
                         <outlet property="textModeCycleStepsLabel" destination="YRb-iK-0vh" id="KO1-ff-psn"/>
                         <outlet property="textModeCycleStepsStepper" destination="cZK-lm-ARd" id="WKd-hm-xrA"/>
                         <outlet property="textModeCycleSwitch" destination="IbR-b5-1uG" id="FJy-40-ex6"/>
@@ -1075,7 +1082,7 @@
         <scene sceneID="bGA-qE-Kac">
             <objects>
                 <windowController storyboardIdentifier="MatrixWindowController" id="4dZ-HA-2bk" sceneMemberID="viewController">
-                    <window key="window" title="Matrix Control" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" titlebarAppearsTransparent="YES" id="B2G-Bu-DLQ">
+                    <window key="window" title="Matrix Control" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" titlebarAppearsTransparent="YES" id="B2G-Bu-DLQ">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
                         <rect key="contentRect" x="294" y="313" width="480" height="270"/>

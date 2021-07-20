@@ -14,6 +14,7 @@
 		A8CE0FAF26A3297C003147EE /* MatrixViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8CE0FAD26A3297C003147EE /* MatrixViewController.swift */; };
 		A8CE0FB026A3297C003147EE /* MatrixCollectionViewItem.xib in Resources */ = {isa = PBXBuildFile; fileRef = A8CE0FAE26A3297C003147EE /* MatrixCollectionViewItem.xib */; };
 		A8CE0FB426A33049003147EE /* MatrixCollectionViewItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8CE0FB226A33049003147EE /* MatrixCollectionViewItem.swift */; };
+		FCAE887926A75AB2008DD45E /* Properties & Axioms.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCAE887826A75AB2008DD45E /* Properties & Axioms.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +29,7 @@
 		A8CE0FAD26A3297C003147EE /* MatrixViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatrixViewController.swift; sourceTree = "<group>"; };
 		A8CE0FAE26A3297C003147EE /* MatrixCollectionViewItem.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MatrixCollectionViewItem.xib; sourceTree = "<group>"; };
 		A8CE0FB226A33049003147EE /* MatrixCollectionViewItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatrixCollectionViewItem.swift; sourceTree = "<group>"; };
+		FCAE887826A75AB2008DD45E /* Properties & Axioms.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Properties & Axioms.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -65,6 +67,7 @@
 				A8CE0F9A26A31820003147EE /* Assets.xcassets */,
 				A8CE0F9C26A31820003147EE /* Main.storyboard */,
 				A8CE0FA926A31EDA003147EE /* MenuViewController.swift */,
+				FCAE887826A75AB2008DD45E /* Properties & Axioms.swift */,
 				A8CE0FB226A33049003147EE /* MatrixCollectionViewItem.swift */,
 				A8CE0FAD26A3297C003147EE /* MatrixViewController.swift */,
 				A8CE0FAE26A3297C003147EE /* MatrixCollectionViewItem.xib */,
@@ -147,6 +150,7 @@
 				A8CE0FB426A33049003147EE /* MatrixCollectionViewItem.swift in Sources */,
 				A8CE0FAF26A3297C003147EE /* MatrixViewController.swift in Sources */,
 				A8CE0FAA26A31EDA003147EE /* MenuViewController.swift in Sources */,
+				FCAE887926A75AB2008DD45E /* Properties & Axioms.swift in Sources */,
 				A8CE0F9726A3181C003147EE /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
