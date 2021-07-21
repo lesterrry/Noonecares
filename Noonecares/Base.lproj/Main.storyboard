@@ -286,7 +286,9 @@
                                                             </textField>
                                                             <slider horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="fiN-ek-klY">
                                                                 <rect key="frame" x="38" y="-3" width="28" height="29"/>
-                                                                <sliderCell key="cell" enabled="NO" alignment="left" minValue="10" maxValue="100" doubleValue="10" sliderType="circular" id="YQe-UA-NFY"/>
+                                                                <sliderCell key="cell" enabled="NO" alignment="left" minValue="10" maxValue="100" doubleValue="10" sliderType="circular" id="YQe-UA-NFY">
+                                                                    <numberFormatter key="formatter" formatterBehavior="default10_4" usesGroupingSeparator="NO" formatWidth="-1" groupingSize="0" minimumIntegerDigits="1" maximumIntegerDigits="42" id="JEQ-nq-VtI"/>
+                                                                </sliderCell>
                                                                 <connections>
                                                                     <action selector="textModeAnimationDelaySliderValueChanged:" target="XfG-lQ-9wD" id="97d-wR-iS0"/>
                                                                 </connections>
@@ -725,7 +727,9 @@
                                                     </stackView>
                                                     <slider verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Nl6-FX-yaa">
                                                         <rect key="frame" x="52" y="0.0" width="126" height="21"/>
-                                                        <sliderCell key="cell" enabled="NO" state="on" alignment="left" minValue="1" maxValue="120" doubleValue="10" tickMarkPosition="above" sliderType="linear" id="aDQ-IF-ePt"/>
+                                                        <sliderCell key="cell" enabled="NO" state="on" alignment="left" minValue="1" maxValue="120" doubleValue="10" tickMarkPosition="above" sliderType="linear" id="aDQ-IF-ePt">
+                                                            <numberFormatter key="formatter" formatterBehavior="default10_4" usesGroupingSeparator="NO" formatWidth="-1" groupingSize="0" minimumIntegerDigits="1" maximumIntegerDigits="42" id="qNk-ua-jK1"/>
+                                                        </sliderCell>
                                                         <connections>
                                                             <action selector="timerModeSliderValueChanged:" target="XfG-lQ-9wD" id="gs2-Hg-y3e"/>
                                                         </connections>
@@ -1079,6 +1083,80 @@
             <point key="canvasLocation" x="245" y="186.5"/>
         </scene>
         <!--Window Controller-->
+        <scene sceneID="wfd-T3-vJY">
+            <objects>
+                <windowController storyboardIdentifier="AboutWindowController" id="Eey-qc-u7F" sceneMemberID="viewController">
+                    <window key="window" title="About" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="fl6-yq-src">
+                        <windowStyleMask key="styleMask" titled="YES" closable="YES"/>
+                        <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+                        <rect key="contentRect" x="196" y="249" width="200" height="160"/>
+                        <rect key="screenRect" x="0.0" y="0.0" width="1440" height="900"/>
+                        <connections>
+                            <outlet property="delegate" destination="Eey-qc-u7F" id="Xoc-0I-VRl"/>
+                        </connections>
+                    </window>
+                    <connections>
+                        <segue destination="NJo-dn-dvg" kind="relationship" relationship="window.shadowedContentViewController" id="i3V-Ca-4Aj"/>
+                    </connections>
+                </windowController>
+                <customObject id="eVB-lj-C10" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-837" y="-80"/>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="A5l-Nq-cAo">
+            <objects>
+                <viewController id="NJo-dn-dvg" sceneMemberID="viewController">
+                    <view key="view" id="j5d-cq-8Ig">
+                        <rect key="frame" x="0.0" y="0.0" width="200" height="160"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="uLg-qG-Rax">
+                                <rect key="frame" x="76" y="56" width="48" height="48"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="48" id="hOO-IS-iqa"/>
+                                    <constraint firstAttribute="height" constant="48" id="umK-Sk-WBM"/>
+                                </constraints>
+                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="noonelogo" id="Kj8-Pf-1OD"/>
+                            </imageView>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="LWr-gF-aeR">
+                                <rect key="frame" x="52" y="124" width="96" height="16"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="92" id="U6P-CP-RIN"/>
+                                </constraints>
+                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="Noonecares" id="b5m-Vt-yr1">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0Ph-KV-ug7">
+                                <rect key="frame" x="26" y="20" width="148" height="11"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="144" id="w1X-Eu-u2k"/>
+                                </constraints>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="github.com/lesterrry/noonecares" id="EQU-cZ-kkb">
+                                    <font key="font" metaFont="system" size="9"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="uLg-qG-Rax" firstAttribute="centerY" secondItem="j5d-cq-8Ig" secondAttribute="centerY" id="Fqv-gc-HYC"/>
+                            <constraint firstItem="uLg-qG-Rax" firstAttribute="centerX" secondItem="j5d-cq-8Ig" secondAttribute="centerX" id="InM-o8-TnG"/>
+                            <constraint firstItem="LWr-gF-aeR" firstAttribute="top" secondItem="j5d-cq-8Ig" secondAttribute="top" constant="20" id="cOr-lj-02U"/>
+                            <constraint firstAttribute="bottom" secondItem="0Ph-KV-ug7" secondAttribute="bottom" constant="20" id="dGC-wF-NzC"/>
+                            <constraint firstItem="0Ph-KV-ug7" firstAttribute="centerX" secondItem="j5d-cq-8Ig" secondAttribute="centerX" id="lMh-zh-ITH"/>
+                            <constraint firstItem="LWr-gF-aeR" firstAttribute="centerX" secondItem="j5d-cq-8Ig" secondAttribute="centerX" id="uW7-E1-Sey"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <customObject id="hW9-qV-ZhY" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-837" y="361"/>
+        </scene>
+        <!--Window Controller-->
         <scene sceneID="bGA-qE-Kac">
             <objects>
                 <windowController storyboardIdentifier="MatrixWindowController" id="4dZ-HA-2bk" sceneMemberID="viewController">
@@ -1384,5 +1462,6 @@
         <image name="NSRemoveTemplate" width="11" height="11"/>
         <image name="NSStatusUnavailable" width="16" height="16"/>
         <image name="NSStopProgressTemplate" width="11" height="11"/>
+        <image name="noonelogo" width="50" height="50"/>
     </resources>
 </document>

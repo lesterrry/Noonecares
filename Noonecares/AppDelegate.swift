@@ -7,9 +7,9 @@
 
 import Cocoa
 
-@NSApplicationMain //MARK: Xcode versions conflict
+#warning("XCode versions conflict")
+@NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
-
     let statusItem = NSStatusBar.system.statusItem(withLength:NSStatusItem.squareLength)
     let popover = NSPopover()
 
