@@ -72,6 +72,7 @@
 			isa = PBXGroup;
 			children = (
 				A8CE0FA726A3185A003147EE /* noonecares.ino */,
+				FCDA502826A98D1200EA7D3F /* README.md */,
 				A8CE0F9526A3181C003147EE /* Noonecares */,
 				A8CE0F9426A3181C003147EE /* Products */,
 				195F8AFB8468154A043AF7FB /* Pods */,
@@ -95,7 +96,6 @@
 				A8CE0F9C26A31820003147EE /* Main.storyboard */,
 				A8DDCB2126AA020B00BB6158 /* SetupViewController.swift */,
 				A8CE0FA926A31EDA003147EE /* MenuViewController.swift */,
-				FCDA502826A98D1200EA7D3F /* README.md */,
 				FCAE887826A75AB2008DD45E /* Properties & Axioms.swift */,
 				A8CE0FB226A33049003147EE /* MatrixCollectionViewItem.swift */,
 				A8CE0FAD26A3297C003147EE /* MatrixViewController.swift */,
