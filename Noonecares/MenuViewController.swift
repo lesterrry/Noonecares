@@ -17,18 +17,36 @@ class MenuViewController: NSViewController {
     @IBOutlet weak var applianceStatusLabel: NSTextField!
     
     @IBOutlet weak var textModeButton: NSButton!
-    @IBAction func textModeButtonPressed(_ sender: Any) { switchMode(to: .text) }
+    @IBAction func textModeButtonPressed(_ sender: Any) {
+        setApplianceLabel(isApplied: false)
+        switchMode(to: .text)
+    }
     @IBOutlet weak var textModeTextField: NSTextField!
+    @IBAction func textModeTextFieldValueChanged(_ sender: Any) {
+        setApplianceLabel(isApplied: false)
+    }
     @IBOutlet weak var textModeColorModePopUpButton: NSPopUpButton!
+    @IBAction func textModeColorModePopUpButtonValueChanged(_ sender: Any) {
+        setApplianceLabel(isApplied: false)
+    }
     @IBOutlet weak var textModeColorWell: NSColorWell!
+    @IBAction func textModeColorWellValueChanged(_ sender: Any) {
+        setApplianceLabel(isApplied: false)
+    }
     @IBOutlet weak var textModeAnimationSegmentedControl: NSSegmentedControl!
     @IBAction func textModeAnimationSegmentedControlValueChanged(_ sender: Any) {
         suitTextCellAnimationDelaySliderEnabledState()
+        setApplianceLabel(isApplied: false)
     }
     @IBOutlet weak var textModeAnimationFadeButton: NSButton!
+    @IBAction func textModeAnimationFadeButtonPressed(_ sender: Any) {
+        setApplianceLabel(isApplied: false)
+    }
     @IBOutlet weak var textModeAnimationDelaySlider: NSSlider!
     @IBAction func textModeAnimationDelaySliderValueChanged(_ sender: Any) {
+        setApplianceLabel(isApplied: false)
         textModeAnimationDelayLabel.stringValue = textModeAnimationDelaySlider.stringValue
+        setApplianceLabel(isApplied: false)
     }
     @IBOutlet weak var textModeAnimationDelayLabel: NSTextField!
     @IBOutlet weak var textModeCycleSwitch: NSSwitch!
@@ -37,31 +55,56 @@ class MenuViewController: NSViewController {
     }
     @IBOutlet weak var textModeCycleStepsLabel: NSTextField!
     @IBOutlet weak var textModeCycleStepsStepper: NSStepper!
-    @IBAction func textModeCycleStepsStepperValueChanged(_ sender: Any) {  }
+    @IBAction func textModeCycleStepsStepperValueChanged(_ sender: Any) {
+        setApplianceLabel(isApplied: false)
+    }
     @IBOutlet weak var textModeCycleStepAddButton: NSButton!
-    @IBAction func textModeCycleStepAddButtonPressed(_ sender: Any) {  }
+    @IBAction func textModeCycleStepAddButtonPressed(_ sender: Any) {
+        setApplianceLabel(isApplied: false)
+    }
     @IBOutlet weak var textModeCycleStepRemoveButton: NSButton!
-    @IBAction func textModeCycleStepRemoveButtonPressed(_ sender: Any) {  }
+    @IBAction func textModeCycleStepRemoveButtonPressed(_ sender: Any) {
+        setApplianceLabel(isApplied: false)
+    }
     @IBOutlet weak var textModeCycleStepClearButton: NSButton!
-    @IBAction func textModeCycleStepsClearButtonPressed(_ sender: Any) {  }
+    @IBAction func textModeCycleStepsClearButtonPressed(_ sender: Any) {
+        setApplianceLabel(isApplied: false)
+    }
     @IBOutlet weak var textModeCycleDelayTextField: NSTextField!
     @IBAction func textModeCycleDelayTextFieldValueChanged(_ sender: NSTextField) {
+        setApplianceLabel(isApplied: false)
         textModeCycleDelayStepper.stringValue = textModeCycleDelayTextField.stringValue
     }
     @IBOutlet weak var textModeCycleDelayStepper: NSStepper!
     @IBAction func textModeCycleDelayStepperValueChanged(_ sender: Any) {
+        setApplianceLabel(isApplied: false)
         textModeCycleDelayTextField.stringValue = textModeCycleDelayStepper.stringValue
     }
     
     @IBOutlet weak var keyTraceModeButton: NSButton!
-    @IBAction func keyTraceModeButtonPressed(_ sender: Any) { switchMode(to: .keyTrace) }
+    @IBAction func keyTraceModeButtonPressed(_ sender: Any) {
+        setApplianceLabel(isApplied: false)
+        switchMode(to: .keyTrace)
+    }
     @IBOutlet weak var keyTraceModeColorModePopUpButton: NSPopUpButton!
+    @IBAction func keyTraceModeColorModePopUpButtonPressed(_ sender: Any) {
+        setApplianceLabel(isApplied: false)
+    }
     @IBOutlet weak var keyTraceModeColorWell: NSColorWell!
+    @IBAction func keyTraceModeColorWellValueChanged(_ sender: Any) {
+        setApplianceLabel(isApplied: false)
+    }
+    
     
     @IBOutlet weak var CCPSModeButton: NSButton!
-    @IBAction func CCPSModeButtonPressed(_ sender: Any) { switchMode(to: .CCPS) }
+    @IBAction func CCPSModeButtonPressed(_ sender: Any) {
+        setApplianceLabel(isApplied: false)
+        switchMode(to: .CCPS)
+    }
     @IBOutlet weak var CCPSModeSavedFileComboBox: NSComboBox!
-    @IBAction func CCPSModeSavedFileComboBoxValueChanged(_ sender: Any) {  }
+    @IBAction func CCPSModeSavedFileComboBoxValueChanged(_ sender: Any) {
+        setApplianceLabel(isApplied: false)
+    }
     @IBAction func CCPSModeControlPanelButtonPressed(_ sender: Any) {
         switchMode(to: .CCPS, forceModeButton: true)
         let controller = NSStoryboard(name: "Main", bundle: nil).instantiateController(withIdentifier: "MatrixWindowController") as! NSWindowController
@@ -69,59 +112,87 @@ class MenuViewController: NSViewController {
     }
     
     @IBOutlet weak var timerModeButton: NSButton!
-    @IBAction func timerModeButtonPressed(_ sender: Any) { switchMode(to: .timer) }
+    @IBAction func timerModeButtonPressed(_ sender: Any) {
+        setApplianceLabel(isApplied: false)
+        switchMode(to: .timer)
+    }
     @IBOutlet weak var timerModeTextField: NSTextField!
     @IBAction func timerModeTextFieldValueChanged(_ sender: NSTextField) {
+        setApplianceLabel(isApplied: false)
         timerModeStepper.stringValue = timerModeTextField.stringValue
         timerModeSlider.stringValue = timerModeTextField.stringValue
     }
     @IBOutlet weak var timerModeStepper: NSStepper!
     @IBAction func timerModeStepperValueChanged(_ sender: Any) {
+        setApplianceLabel(isApplied: false)
         timerModeTextField.stringValue = timerModeStepper.stringValue
         timerModeSlider.stringValue = timerModeStepper.stringValue
     }
     @IBOutlet weak var timerModeSlider: NSSlider!
     @IBAction func timerModeSliderValueChanged(_ sender: Any) {
+        setApplianceLabel(isApplied: false)
         timerModeTextField.stringValue = timerModeSlider.stringValue
         timerModeStepper.stringValue = timerModeSlider.stringValue
     }
     @IBOutlet weak var timerModeProgressIndicator: NSProgressIndicator!
     
     @IBOutlet weak var pomodoroModeButton: NSButton!
-    @IBAction func pomodoroModeButtonPressed(_ sender: Any) { switchMode(to: .pomodoro) }
+    @IBAction func pomodoroModeButtonPressed(_ sender: Any) {
+        setApplianceLabel(isApplied: false)
+        switchMode(to: .pomodoro)
+    }
     @IBOutlet weak var pomodoroModeWorkTextField: NSTextField!
     @IBAction func pomodoroModeWorkTextFieldValueChanged(_ sender: Any) {
+        setApplianceLabel(isApplied: false)
         pomodoroModeWorkStepper.stringValue = pomodoroModeWorkTextField.stringValue
     }
     @IBOutlet weak var pomodoroModeWorkStepper: NSStepper!
     @IBAction func pomodoroModeWorkStepperValueChanged(_ sender: Any) {
+        setApplianceLabel(isApplied: false)
         pomodoroModeWorkTextField.stringValue = pomodoroModeWorkStepper.stringValue
     }
     @IBOutlet weak var pomodoroModeWorkProgressIndicator: NSProgressIndicator!
     @IBOutlet weak var pomodoroModeRestTextField: NSTextField!
     @IBAction func pomodoroModeRestTextFieldValueChanged(_ sender: Any) {
+        setApplianceLabel(isApplied: false)
         pomodoroModeRestStepper.stringValue = pomodoroModeRestTextField.stringValue
     }
     @IBOutlet weak var pomodoroModeRestStepper: NSStepper!
     @IBAction func pomodoroModeRestStepperValueChanged(_ sender: Any) {
+        setApplianceLabel(isApplied: false)
         pomodoroModeRestTextField.stringValue = pomodoroModeRestStepper.stringValue
     }
     @IBOutlet weak var pomodoroModeRestProgressIndicator: NSProgressIndicator!
     
     @IBOutlet weak var clockModeButton: NSButton!
-    @IBAction func clockModeButtonPressed(_ sender: Any) { switchMode(to: .clock) }
+    @IBAction func clockModeButtonPressed(_ sender: Any) {
+        setApplianceLabel(isApplied: false)
+        switchMode(to: .clock)
+    }
     
     @IBOutlet weak var nowPlayingModeButton: NSButton!
-    @IBAction func nowPlayingModeButtonPressed(_ sender: Any) { switchMode(to: .nowPlaying) }
+    @IBAction func nowPlayingModeButtonPressed(_ sender: Any) {
+        setApplianceLabel(isApplied: false)
+        switchMode(to: .nowPlaying)
+    }
     
     @IBOutlet weak var offModeButton: NSButton!
-    @IBAction func offModeButtonPressed(_ sender: Any) { switchMode(to: .off) }
+    @IBAction func offModeButtonPressed(_ sender: Any) {
+        setApplianceLabel(isApplied: false)
+        switchMode(to: .off)
+    }
     
-    @IBAction func quitButtonPressed(_ sender: Any) { exit(0) }
+    @IBAction func quitButtonPressed(_ sender: Any) {
+        exit(0)
+    }
     @IBOutlet weak var customCommandButton: NSButton!
-    @IBAction func customCommandButtonPressed(_ sender: Any) {  }
+    @IBAction func customCommandButtonPressed(_ sender: Any) {
+        
+    }
     @IBOutlet weak var applyButton: NSButton!  // TODO: Disable button by default
-    @IBAction func applyButtonPressed(_ sender: Any) {  }
+    @IBAction func applyButtonPressed(_ sender: Any) {
+        composeAndExecuteCommand()
+    }
     
     //*********************************************************************
     // VARS & CONSTS
@@ -148,6 +219,17 @@ class MenuViewController: NSViewController {
         }
     }
     
+    /// Create and send a command to the matix
+    func composeAndExecuteCommand() {
+        switch systemMode {
+        case .text:
+            ()
+        default:
+            setApplianceLabel(isApplied: true)
+            //setApplianceLabel("Unknown mode", NSColor.red)
+        }
+    }
+    
     /// Switch system mode
     /// - Parameters:
     ///   - to: Mode to switch to
@@ -156,6 +238,22 @@ class MenuViewController: NSViewController {
         systemMode = to
         setModeButtonsState(to: .off, except: to.rawValue, force: forceModeButton)
         setCellsEnabledState(to: false, except: to.rawValue, revert: true)
+    }
+    
+    /// Set appliance label to default state
+    /// - Parameter isApplied: Whether to set the label to Applied state
+    func setApplianceLabel(isApplied: Bool) {
+        applianceStatusLabel.stringValue = isApplied ? "" : "Not Applied"
+        applianceStatusLabel.textColor = NSColor.white
+    }
+    
+    /// Set appliance label to a specific string value and color
+    /// - Parameters:
+    ///   - to: String value to set the label to
+    ///   - color: Color to paint the label in
+    func setApplianceLabel(_ to: String, _ color: NSColor) {
+        applianceStatusLabel.stringValue = to
+        applianceStatusLabel.textColor = color
     }
     
     /// Set all mode buttons to a specific state

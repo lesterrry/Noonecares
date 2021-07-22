@@ -30,6 +30,7 @@
 		A8CE0FAE26A3297C003147EE /* MatrixCollectionViewItem.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MatrixCollectionViewItem.xib; sourceTree = "<group>"; };
 		A8CE0FB226A33049003147EE /* MatrixCollectionViewItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatrixCollectionViewItem.swift; sourceTree = "<group>"; };
 		FCAE887826A75AB2008DD45E /* Properties & Axioms.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Properties & Axioms.swift"; sourceTree = "<group>"; };
+		FCDA502826A98D1200EA7D3F /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -67,6 +68,7 @@
 				A8CE0F9A26A31820003147EE /* Assets.xcassets */,
 				A8CE0F9C26A31820003147EE /* Main.storyboard */,
 				A8CE0FA926A31EDA003147EE /* MenuViewController.swift */,
+				FCDA502826A98D1200EA7D3F /* README.md */,
 				FCAE887826A75AB2008DD45E /* Properties & Axioms.swift */,
 				A8CE0FB226A33049003147EE /* MatrixCollectionViewItem.swift */,
 				A8CE0FAD26A3297C003147EE /* MatrixViewController.swift */,
