@@ -52,7 +52,7 @@ Command arguments values represent different data types. This is the reference
 - `e`: *Int* – animation delay (100-1000)
 
 **Optional return**:
-- *Error*
+- *Errors* `011`, `012`, `021`
 
 #### *ACH* – append char
 **Required arguments**:
@@ -60,7 +60,7 @@ Command arguments values represent different data types. This is the reference
 - `c`: *Color* – color of the matrix
 
 **Optional return**:
-- *Errors* `011`, `012`, `021`. `041`
+- *Errors* `011`, `012`, `021`,  `041`
 
 #### *CLK* – display clock
 **Required arguments**:
