@@ -49,18 +49,39 @@ Command arguments values represent different data types. This is the reference
 - `i`: *ExBool* – whether to display inout animation
 - `a`: *Animation* – animation to apply
 - `e`: *Int* – animation delay (100-1000)
+**Optional return**:
+- *Error*
 
 #### *ACH* – append char
 **Required arguments**:
 - `h`: *Char* – char to append
 - `c`: *Color* – color of the matrix
+**Optional return**:
+- *Errors* `011`, `012`, `021`. `041`
 
 #### *CLK* – display clock
 **Required arguments**:
 - `t`: *Time* – time to sync
+**Optional return**:
+- *Errors* `011`, `012`, `021`
 
 #### *BRT* – set brightness
 **Required arguments**:
 - `v`: *Int* – value (4-255)
+**Optional return**:
+- *Errors* `011`, `012`, `021`
+
+#### *PNG* – ACK the sender
+**Guaranteed return**:
+- *String* – constant `pong` message
 
 #### *CLR* – clear matrix
+
+## Error codes list
+Error codes are returned by some functions if they fail to properly execute. Here's the reference
+- `ER011` – unexpected '1' selector while parsing command arguments
+- `ER012` – unexpected '2' selector while parsing command arguments
+- `ER021` – required argument not served
+- `ER031` – unknown command
+- `ER032` – unknown routine
+- `ER041` – Type error: expected *Char*
