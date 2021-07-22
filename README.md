@@ -45,10 +45,12 @@ Command arguments values represent different data types. This is the reference
 **Required arguments**:
 - `t`: *String* – text to display
 - `c`: *Color* – color of the text
+
 **Optional arguments**:
 - `i`: *ExBool* – whether to display inout animation
 - `a`: *Animation* – animation to apply
 - `e`: *Int* – animation delay (100-1000)
+
 **Optional return**:
 - *Error*
 
@@ -56,18 +58,21 @@ Command arguments values represent different data types. This is the reference
 **Required arguments**:
 - `h`: *Char* – char to append
 - `c`: *Color* – color of the matrix
+
 **Optional return**:
 - *Errors* `011`, `012`, `021`. `041`
 
 #### *CLK* – display clock
 **Required arguments**:
 - `t`: *Time* – time to sync
+
 **Optional return**:
 - *Errors* `011`, `012`, `021`
 
 #### *BRT* – set brightness
 **Required arguments**:
 - `v`: *Int* – value (4-255)
+
 **Optional return**:
 - *Errors* `011`, `012`, `021`
 
