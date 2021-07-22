@@ -15,12 +15,14 @@
 #include <Adafruit_NeoMatrix.h>              // Matrix controls
 #include <Adafruit_NeoPixel.h>               // LED strip controls
 #include <Fonts/Org_01.h>                    // Main font
+#include <Time.h>
+#include <TimeLib.h>
 
 // Compile-time parameters
-#define LED_COUNT 432                        // Number of LEDs in the matrix
-#define LED_PIN 6                            // Pin matrix is connected to
-#define LED_MIN_BRT 4                        // Lowest possible LEDs brightness
-#define CMD_ARGS_COUNT 5                     // Maximum number of command arguments
+#define LED_COUNT 432
+#define LED_PIN 6
+#define LED_MIN_BRT 4
+#define CMD_ARGS_COUNT 5
 
 // Reserved keywords
 #define EXISTS_KEYWORD "%IS%"
@@ -228,6 +230,8 @@ void executeCommand(String name, String args[CMD_ARGS_COUNT][2]) {
     } else if (name == "CLR") {               // Clear the matrix
         matrix.fillScreen(0);
         matrix.show();
+    } else if (name == "PNG") {               // ACK the sender
+        Serial.println("pong");
     } else if (name == "CLK") {               // Enter clock mode
         String time = getArgumentValue(args, "t");
         if (time == "") {

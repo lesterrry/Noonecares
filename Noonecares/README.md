@@ -48,6 +48,7 @@ Command arguments values represent different data types. This is the reference
 **Optional arguments**:
 - `i`: *ExBool* – whether to display inout animation
 - `a`: *Animation* – animation to apply
+- `e`: *Int* – animation delay (100-1000)
 
 #### *ACH* – append char
 **Required arguments**:
