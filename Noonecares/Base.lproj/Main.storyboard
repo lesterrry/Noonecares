@@ -91,8 +91,8 @@
                                         </customSpacing>
                                     </stackView>
                                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Cru-sc-vJf">
-                                        <rect key="frame" x="278" y="0.0" width="76" height="16"/>
-                                        <textFieldCell key="cell" lineBreakMode="clipping" allowsUndo="NO" alignment="right" title="Not Applied" id="BZ0-tg-mKZ">
+                                        <rect key="frame" x="300" y="0.0" width="54" height="16"/>
+                                        <textFieldCell key="cell" lineBreakMode="clipping" allowsUndo="NO" alignment="right" id="BZ0-tg-mKZ">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -306,7 +306,7 @@
                                                             </textField>
                                                             <slider horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="fiN-ek-klY">
                                                                 <rect key="frame" x="38" y="-3" width="28" height="29"/>
-                                                                <sliderCell key="cell" enabled="NO" alignment="left" minValue="10" maxValue="100" doubleValue="10" sliderType="circular" id="YQe-UA-NFY">
+                                                                <sliderCell key="cell" continuous="YES" enabled="NO" alignment="left" minValue="1" maxValue="20" doubleValue="1" sliderType="circular" id="YQe-UA-NFY">
                                                                     <numberFormatter key="formatter" formatterBehavior="default10_4" usesGroupingSeparator="NO" formatWidth="-1" groupingSize="0" minimumIntegerDigits="1" maximumIntegerDigits="42" id="JEQ-nq-VtI"/>
                                                                 </sliderCell>
                                                                 <connections>
@@ -315,7 +315,7 @@
                                                             </slider>
                                                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="sMR-r3-EKo" userLabel="Speed">
                                                                 <rect key="frame" x="68" y="4" width="28" height="16"/>
-                                                                <textFieldCell key="cell" lineBreakMode="clipping" title="30" id="B7T-1D-YQr">
+                                                                <textFieldCell key="cell" lineBreakMode="clipping" title="3" id="B7T-1D-YQr">
                                                                     <font key="font" metaFont="system"/>
                                                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>

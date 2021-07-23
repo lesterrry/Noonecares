@@ -41,7 +41,7 @@ class MenuViewController: NSViewController {
     }
     @IBOutlet weak var textModeAnimationSegmentedControl: NSSegmentedControl!
     @IBAction func textModeAnimationSegmentedControlValueChanged(_ sender: Any) {
-        suitTextCellAnimationDelaySliderEnabledState()
+        suitTextCellAnimationControlsEnabledState()
         setApplianceLabel(.notApplied)
     }
     @IBOutlet weak var textModeAnimationFadeButton: NSButton!
@@ -264,7 +264,7 @@ class MenuViewController: NSViewController {
             default:
                 colorComponent = colorString(from: textModeColorWell.color)
             }
-            let fadeComponent = textModeAnimationFadeButton.state == .on ? "<i" : ""
+            let fadeComponent = (textModeAnimationFadeButton.state == .on && textModeAnimationFadeButton.isEnabled) ? "<i" : ""
             command = "RTX<t\(textModeTextField.stringValue)<c\(colorComponent + fadeComponent + animationComponent)/"
         case .off:
             command = "CLR/"
@@ -412,7 +412,7 @@ class MenuViewController: NSViewController {
                         allCells[i][j]?.isEnabled = !to
                         if j == 6 {  // Animation Delay Slider and elements of the Cycle Cell must be set in a specific way
                             suitTextCellCycleElementsEnabledState()
-                            suitTextCellAnimationDelaySliderEnabledState()
+                            suitTextCellAnimationControlsEnabledState()
                             suitTextCellColorWellEnabledState()
                             break
                         }
@@ -450,8 +450,10 @@ class MenuViewController: NSViewController {
     }
     
     /// Set Delay Slider to a corresponding state
-    private func suitTextCellAnimationDelaySliderEnabledState() {
-        textModeAnimationDelaySlider.isEnabled = textModeAnimationSegmentedControl.indexOfSelectedItem != 0
+    private func suitTextCellAnimationControlsEnabledState() {
+        let b = textModeAnimationSegmentedControl.indexOfSelectedItem != 0
+        textModeAnimationDelaySlider.isEnabled = b
+        textModeAnimationFadeButton.isEnabled = !b
     }
     
     /// Set Color Well to a corresponding state

@@ -89,4 +89,4 @@ Error codes are returned by some functions if they fail to properly execute. Her
 - `ER021` – required argument not served
 - `ER031` – unknown command
 - `ER032` – unknown routine
-- `ER041` – Type error: expected *Char*
+- `ER041` – type error: expected *Char*

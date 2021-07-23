@@ -29,11 +29,15 @@
 #define RANDOM_KEYWORD "%RND%"
 #define CHAR_RANDOM_KEYWORD "%CHRND%"
 #define TAILLIGHT_KEYWORD "%TLL%"
+#define BLINK_KEYWORD "%BLI%"
+#define SCROLL_KEYWORD "%SCR%"
 
 // Variables
 int routineTask = 0;                          // Long-lasting task to do as a routine
 int cachedMatrixBrightness = 30;              // Brightness of matrix to revert to
-int counter = 0;                              // Int which controls longer (than 0.1sec) routines
+int counter = 0;                              // Int which controls longer (than 0.05sec) routines
+int routineDelay = 3;                         // Int which controls routine delay
+int scrollLimit = -36;                         // Int which controls scrolling limit
 uint32_t timer;                               // Main routine timer
 String cachedCommandName = "";                // Name of a command to execute in a routine
 String cachedCommandArgs[CMD_ARGS_COUNT][2];  // Arguments of a command to execute in a routine
@@ -47,7 +51,9 @@ Adafruit_NeoMatrix matrix = Adafruit_NeoMatrix(
                               NEO_MATRIX_TOP + NEO_MATRIX_RIGHT + NEO_MATRIX_ROWS + NEO_MATRIX_ZIGZAG,
                               NEO_GRB + NEO_KHZ400
                             );
+int scrollPos = matrix.width();
 
+// MARK: Setup
 void setup() {
     int rainbow[7][3] = { { 255, 153, 0 }, { 255, 0, 0 }, { 0, 255, 0 }, { 0, 0, 255 }, { 66, 170, 255 }, { 139, 0, 255 }, { 255, 255, 0 } };
     String greeting = "NO ONE CARES";
@@ -69,30 +75,53 @@ void setup() {
     timer = millis();
 }
 
+// MARK: Loop
 void loop() {
     if (Serial.available() > 0) {             // Receive data over serial
         handleCommand(Serial.readStringUntil('/'));
     }
-    if (millis() - timer > 100) {             // Main timer routine (0.1sec)
+    if (millis() - timer > 5) {               // Main timer routine (0.05sec)
         counter += 1;
         switch (routineTask) {
             case 0:                           // No task
                 break;
-            case 2:                           // Clock display
-                if (counter < 8) { break; }
+            case 2: {                         // Clock display
+                if (counter < 8) break;
                 counter = 0;
                 matrix.clear();
-                matrix.setCursor(7, 5);
                 matrix.setTextColor(matrix.Color(100, 100, 100));
-                matrix.print(hour());
-                matrix.print(":");
-                matrix.print(minute());
-                matrix.print(":");
-                matrix.print(second());
+                int h = hour(), m = minute(), s = second();
+                matrix.setCursor(10, 5);
+                matrix.print(h > 9 ? h : "0" + String(h));
+                matrix.setCursor(30, 5);
+                matrix.print(m > 9 ? m : "0" + String(m));
+                matrix.setCursor(50, 5);
+                matrix.print(s > 9 ? s : "0" + String(s));
                 matrix.show();
                 break;
-            case 1:                           // Inout animation MARK: This case behaves weird
-            {
+            }
+            case 3: {
+                if (counter == routineDelay) {
+                    executeCommand(cachedCommandName, cachedCommandArgs);
+                }
+                if (counter > routineDelay * 2) {
+                    counter = 0;
+                    clearMatrix();
+                }
+                break;
+            }
+            case 4: {
+                if (counter < routineDelay) break;
+                counter = 0;
+                matrix.fillScreen(0);
+                matrix.setCursor(scrollPos, 5);
+                if(--scrollPos < scrollLimit) {
+                    scrollPos = matrix.width();
+                }
+                executeCommand(cachedCommandName, cachedCommandArgs);
+                break;
+            }
+            case 1: {
                 float b = matrix.getBrightness();
                 if (cachedCommandName != "" && b >= 5 && !inoutInDone) {
                     float a = (b / 100) * 50;
@@ -114,9 +143,10 @@ void loop() {
                 }
                 break;
             }
-            default:                          // TODO: Check that it is being executed
+            default: {
                 reportError("rounot", "032");
                 routineTask = 0;
+            }
         }
         if (counter > 1000) {
             counter = 0;
@@ -132,6 +162,7 @@ void clearMatrix() {
 }
 
 void handleCommand(String command) {
+    routineTask = 0;
     String name = command.substring(0, 3);
     String argstring = command.substring(3);
     command = "";
@@ -177,6 +208,25 @@ void handleCommand(String command) {
         setTaskCommand(1, name, args);
         return;
     }
+    s = getArgumentValue(args, "a");
+    if (s != "") {
+        String d = getArgumentValue(args, "e");
+        if (d != "") {
+            routineDelay = d.toInt();
+            d = "";
+        }
+        if (s == BLINK_KEYWORD) {
+            setTaskCommand(3, name, args);
+            return;
+        }
+        if (s == SCROLL_KEYWORD) {
+            String n = getArgumentValue(args, "t");
+            scrollLimit = -7 * n.length();
+            n = "";
+            setTaskCommand(4, name, args);
+            return;
+        }
+    }
     executeCommand(name, args);
 }
 
@@ -188,7 +238,7 @@ void setTaskCommand(int task, String name, String args[CMD_ARGS_COUNT][2]) {
     }
     cachedCommandName = name;
     refillArgsArray(args);
-    routineTask = 1;
+    routineTask = task;
     cachedMatrixBrightness = matrix.getBrightness();
 }
 
@@ -203,17 +253,18 @@ void refillArgsArray(String args[CMD_ARGS_COUNT][2]) {
 void executeCommand(String name, String args[CMD_ARGS_COUNT][2]) {
     if (name == "RTX") {                      // Just print text
         String text = getArgumentValue(args, "t");
-        String scolor = getArgumentValue(args, "c");
-        if (text == "" || scolor == "") {
+        String sColor = getArgumentValue(args, "c");
+        String sAnim = getArgumentValue(args, "a");
+        if (text == "" || sColor == "") {
             reportError("argnot", "021");
             return;
         }
-        uint16_t colors = getColors(scolor);
-        safePrint(text, colors);
+        uint16_t colors = getColors(sColor);
+        safePrint(text, colors, sAnim != "%SCR%");
     } else if (name == "ACH") {               // Append char (!!!) to currently displayed text
         String character = getArgumentValue(args, "h");
-        String scolor = getArgumentValue(args, "c");
-        if (character == "" || scolor == "") {
+        String sColor = getArgumentValue(args, "c");
+        if (character == "" || sColor == "") {
             reportError("argnot", "021");
             return;
         }
@@ -221,12 +272,12 @@ void executeCommand(String name, String args[CMD_ARGS_COUNT][2]) {
             reportError("notchar", "041");
             return;
         }
-        uint16_t colors = getColors(scolor);
+        uint16_t colors = getColors(sColor);
         if (currentCharSequence.length() > 11) {
             currentCharSequence = currentCharSequence.substring(1);
         }
         currentCharSequence += character;
-        safePrint(currentCharSequence, colors);
+        safePrint(currentCharSequence, colors, true);
     } else if (name == "CLR") {               // Clear the matrix
         matrix.fillScreen(0);
         matrix.show();
@@ -273,10 +324,12 @@ void drawCCPS(String sequence) {
     
 }
 
-void safePrint(String text, uint16_t colors) {
-    matrix.fillScreen(0);
+void safePrint(String text, uint16_t colors, bool reset) {
     text.toUpperCase();
-    matrix.setCursor(0, 5);
+    if (reset) {
+        matrix.setCursor(0, 5);
+        matrix.fillScreen(0);
+    }
     if (colors == 1) {
         for (int i = 0; i < text.length(); i++) {
             int r, g, b, sum;
@@ -361,7 +414,7 @@ String getArgumentValue(String args[CMD_ARGS_COUNT][2], String forkey) {
 void reportError(String short_message, String error_code) {
     Serial.println("ER" + error_code);
     matrix.fillScreen(0);
-    safePrint("ER " + short_message, matrix.Color(255, 0, 0));
+    safePrint("ER " + short_message, matrix.Color(255, 0, 0), true);
     matrix.show();
     delay(2000);
     matrix.fillScreen(0);
