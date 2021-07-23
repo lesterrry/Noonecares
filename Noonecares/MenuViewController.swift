@@ -11,6 +11,21 @@ import ORSSerial
 class MenuViewController: NSViewController {
     
     //*********************************************************************
+    // MARK: STRUCTURES
+    //*********************************************************************
+    /// Step to use in main routine cycle
+    struct TextCycleStep {
+        /// Text to send to the device
+        let text: String
+        /// Color to paint the text. Pass String to the first element if specific coloring is being used, or NSColor to the second
+        let color: (String?, NSColor?)
+        /// Animation value. First element is the animation keyword, second is the delay.
+        let animation: (String, Int)?
+        /// Whether to apply fade animation
+        var fade: Bool = false
+    }
+    
+    //*********************************************************************
     // MARK: OUTLETS & ACTIONS
     //*********************************************************************
     @IBOutlet weak var connectionStatusImageView: NSImageView!
@@ -25,56 +40,79 @@ class MenuViewController: NSViewController {
     @IBAction func textModeButtonPressed(_ sender: Any) {
         setApplianceLabel(.notApplied)
         setMode(to: .text)
+        insertToTextCycleRoutine()
     }
     @IBOutlet weak var textModeTextField: NSTextField!
     @IBAction func textModeTextFieldValueChanged(_ sender: Any) {
         setApplianceLabel(.notApplied)
+        insertToTextCycleRoutine()
     }
     @IBOutlet weak var textModeColorModePopUpButton: NSPopUpButton!
     @IBAction func textModeColorModePopUpButtonValueChanged(_ sender: Any) {
         suitTextCellColorWellEnabledState()
         setApplianceLabel(.notApplied)
+        insertToTextCycleRoutine()
     }
     @IBOutlet weak var textModeColorWell: NSColorWell!
     @IBAction func textModeColorWellValueChanged(_ sender: Any) {
         setApplianceLabel(.notApplied)
+        insertToTextCycleRoutine()
     }
     @IBOutlet weak var textModeAnimationSegmentedControl: NSSegmentedControl!
     @IBAction func textModeAnimationSegmentedControlValueChanged(_ sender: Any) {
         suitTextCellAnimationControlsEnabledState()
         setApplianceLabel(.notApplied)
+        insertToTextCycleRoutine()
     }
     @IBOutlet weak var textModeAnimationFadeButton: NSButton!
     @IBAction func textModeAnimationFadeButtonPressed(_ sender: Any) {
         setApplianceLabel(.notApplied)
+        insertToTextCycleRoutine()
     }
     @IBOutlet weak var textModeAnimationDelaySlider: NSSlider!
     @IBAction func textModeAnimationDelaySliderValueChanged(_ sender: Any) {
         setApplianceLabel(.notApplied)
-        textModeAnimationDelayLabel.stringValue = textModeAnimationDelaySlider.stringValue
-        setApplianceLabel(.notApplied)
+        updateTextModeAnimationDelayLabel()
+        insertToTextCycleRoutine()
     }
     @IBOutlet weak var textModeAnimationDelayLabel: NSTextField!
     @IBOutlet weak var textModeCycleSwitch: NSSwitch!
     @IBAction func textModeCycleSwitchSwitched(_ sender: Any) {
         suitTextCellCycleElementsEnabledState()
     }
+    @IBOutlet weak var textModeCycleProgressIndicator: NSProgressIndicator!
     @IBOutlet weak var textModeCycleStepsLabel: NSTextField!
     @IBOutlet weak var textModeCycleStepsStepper: NSStepper!
     @IBAction func textModeCycleStepsStepperValueChanged(_ sender: Any) {
         setApplianceLabel(.notApplied)
+        updateTextModeCycleStepsLabel()
+        applyTextCycleRoutineElement()
     }
     @IBOutlet weak var textModeCycleStepAddButton: NSButton!
     @IBAction func textModeCycleStepAddButtonPressed(_ sender: Any) {
         setApplianceLabel(.notApplied)
+        textModeCycleStepsStepper.maxValue += 1
+        textModeCycleStepsStepper.integerValue += 1
+        updateTextModeCycleStepsLabel()
+        insertToTextCycleRoutine(inserting: true)
     }
     @IBOutlet weak var textModeCycleStepRemoveButton: NSButton!
     @IBAction func textModeCycleStepRemoveButtonPressed(_ sender: Any) {
         setApplianceLabel(.notApplied)
+        currentRoutineIndex = 0
+        textCycleRoutine.remove(at: textModeCycleStepsStepper.integerValue)
+        textModeCycleStepsStepper.maxValue -= 1
+        textModeCycleStepsStepper.integerValue -= 1
+        updateTextModeCycleStepsLabel()
     }
-    @IBOutlet weak var textModeCycleStepClearButton: NSButton!
+    @IBOutlet weak var textModeCycleStepsClearButton: NSButton!
     @IBAction func textModeCycleStepsClearButtonPressed(_ sender: Any) {
         setApplianceLabel(.notApplied)
+        currentRoutineIndex = 0
+        textModeCycleStepsStepper.maxValue = 0
+        textModeCycleStepsStepper.integerValue = 0
+        updateTextModeCycleStepsLabel()
+        insertToTextCycleRoutine(clearing: true)
     }
     @IBOutlet weak var textModeCycleDelayTextField: NSTextField!
     @IBAction func textModeCycleDelayTextFieldValueChanged(_ sender: NSTextField) {
@@ -204,25 +242,52 @@ class MenuViewController: NSViewController {
     // MARK: VARS & CONSTS
     //*********************************************************************
     var systemMode = SystemProperties.Mode.off
-    public static var connectionState = SystemProperties.ConnectionState.disconnected
     var modeApplied = true
+    public static var connectionState = SystemProperties.ConnectionState.disconnected
     private static var serialPort: ORSSerialPort!
+    static var k = Keylogger()
+    var routineTimer: Timer?
+    var textCycleRoutine: [TextCycleStep] = []
+    var currentRoutineIndex = 0
     
     //*********************************************************************
     // MARK: MAIN FUNCTIONS
     //*********************************************************************
     override func viewDidLoad() {
         super.viewDidLoad()
+        MenuViewController.k.start()
     }
     
     override func viewDidAppear() {
         NSApplication.shared.activate(ignoringOtherApps: true)
-        establishConnection()
+        insertToTextCycleRoutine(inserting: true)
+        if MenuViewController.connectionState != .connected { establishConnection() }
     }
     
     override var representedObject: Any? {
         didSet {
         // Update the view, if already loaded.
+        }
+    }
+    
+    /// Send a command to the device via serial port
+    /// - Parameter command: Command to send to the device
+    public static func sendCommand(_ command: String) {
+        guard let d = command.data(using: .utf8) else {
+            SystemMethods.log("No data to send")
+            return
+        }
+        MenuViewController.serialPort.send(d)
+    }
+    
+    /// Do routine task
+    @objc
+    func performRoutine() {
+        composeAndExecuteCommand(from: textCycleRoutine[currentRoutineIndex])
+        if currentRoutineIndex < textCycleRoutine.count - 1 {
+            currentRoutineIndex += 1
+        } else {
+            currentRoutineIndex = 0
         }
     }
     
@@ -238,34 +303,49 @@ class MenuViewController: NSViewController {
         MenuViewController.serialPort.open()
     }
     
-    /// Create and send a command to the matix
+    /// Creare from cycle step and send a command to the matix
+    /// - Parameter from: Cycle step to use
+    func composeAndExecuteCommand(from: TextCycleStep) {
+        let command: String!
+        let colorCompoment: String!
+        if let s = from.color.0 {
+            colorCompoment = s
+        } else if let s = from.color.1 {
+            colorCompoment = colorString(from: s)
+        } else {
+            fatalError("Color error")
+        }
+        let animationComponent: String!
+        if let s = from.animation {
+            animationComponent = "\(s.0)<e\(s.1)"
+        } else {
+            animationComponent = ""
+        }
+        command = "RTX<t\(from.text)<c\(colorCompoment + (from.fade ? "<i" : "") + animationComponent)/"
+        MenuViewController.sendCommand(command)
+        setApplianceLabel(.applied)
+    }
+    
+    /// Create from UI and send a command to the matix
     func composeAndExecuteCommand() {
+        textModeCycleProgressIndicator.stopAnimation(nil)
+        routineTimer?.invalidate()
         let command: String!
         switch systemMode {
         case .text:
             guard textModeTextField.stringValue != "" else { setApplianceLabel(.corruptedParameters); return }
-            let animationComponent: String!
-            switch textModeAnimationSegmentedControl.indexOfSelectedItem {
-            case 1:
-                animationComponent = "<a%BLI%<e\(textModeAnimationDelaySlider.stringValue)"
-            case 2:
-                animationComponent = "<a%SCR%<e\(textModeAnimationDelaySlider.stringValue)"
-            default:
-                animationComponent = ""
-            }
-            let colorComponent: String!
-            switch textModeColorModePopUpButton.indexOfSelectedItem {
-            case 1:
-                colorComponent = "%RND%"
-            case 2:
-                colorComponent = "%CHRND%"
-            case 3:
-                colorComponent = "%TLL%"
-            default:
-                colorComponent = colorString(from: textModeColorWell.color)
+            if textModeCycleSwitch.state == .on && textModeCycleSwitch.isEnabled {
+                guard cycleValid() else { setApplianceLabel(.corruptedParameters); return }
+                insertToTextCycleRoutine()
+                routineTimer = Timer.scheduledTimer(
+                    timeInterval: Double(textModeCycleDelayStepper.integerValue),
+                    target: self,
+                    selector: #selector(self.performRoutine), userInfo: nil, repeats: true)
+                textModeCycleProgressIndicator.startAnimation(nil)
+                return
             }
             let fadeComponent = (textModeAnimationFadeButton.state == .on && textModeAnimationFadeButton.isEnabled) ? "<i" : ""
-            command = "RTX<t\(textModeTextField.stringValue)<c\(colorComponent + fadeComponent + animationComponent)/"
+            command = "RTX<t\(textModeTextField.stringValue)<c\(getColor() + fadeComponent + (getTextAnimation(withDelay: true) ?? ""))/"
         case .off:
             command = "CLR/"
         default:
@@ -277,14 +357,125 @@ class MenuViewController: NSViewController {
         setApplianceLabel(.applied)
     }
     
-    /// Send a command to the device via serial port
-    /// - Parameter command: Command to send to the device
-    public static func sendCommand(_ command: String) {
-        guard let d = command.data(using: .utf8) else {
-            SystemMethods.log("No data to send")
-            return
+    /// Check cycle for validity
+    /// - Returns: whether current routine is valid
+    func cycleValid() -> Bool {
+        for i in textCycleRoutine {
+            if i.text == "" { return false }
         }
-        MenuViewController.serialPort.send(d)
+        return true
+    }
+    
+    /// Insert current text cell parameters to routine array
+    func insertToTextCycleRoutine(inserting: Bool = false, clearing: Bool = false) {
+        var animationOut: (String, Int)? = nil
+        if let animation = getTextAnimation(withDelay: false) {
+            animationOut = (animation, textModeAnimationDelaySlider.integerValue)
+        }
+        let element = TextCycleStep(text: textModeTextField.stringValue, color: getColor(), animation: animationOut, fade: (textModeAnimationFadeButton.isEnabled && textModeAnimationFadeButton.state == .on))
+        if inserting {
+            textCycleRoutine.insert(element, at: textModeCycleStepsStepper.integerValue)
+        } else if clearing {
+            textCycleRoutine = [element]
+        } else {
+            textCycleRoutine[textModeCycleStepsStepper.integerValue] = element
+        }
+    }
+    
+    /// Apply current routine element's data to the UI
+    func applyTextCycleRoutineElement() {
+        let element = textCycleRoutine[textModeCycleStepsStepper.integerValue]
+        textModeTextField.stringValue = element.text
+        var itemIndex = 0
+        if let s = element.color.0 {
+            switch s {
+            case "%RND%":
+                itemIndex = 1
+            case "%CHRND%":
+                itemIndex = 2
+            case "%TLL%":
+                itemIndex = 3
+            default: ()
+            }
+        }
+        textModeColorModePopUpButton.selectItem(at: itemIndex)
+        if let c = element.color.1 {
+            textModeColorWell.color = c
+        }
+        textModeAnimationFadeButton.state = element.fade ? .on : .off
+        if let a = element.animation {
+            textModeAnimationDelaySlider.integerValue = a.1
+            updateTextModeAnimationDelayLabel()
+            var segmentIndex = 0
+            switch a.0 {
+            case "<a%BLI%":
+                segmentIndex = 1
+            case "<a%SCR%":
+                segmentIndex = 2
+            default: ()
+            }
+            textModeAnimationSegmentedControl.setSelected(true, forSegment: segmentIndex)
+        } else {
+            textModeAnimationSegmentedControl.setSelected(true, forSegment: 0)
+        }
+        suitTextCellColorWellEnabledState()
+        suitTextCellAnimationControlsEnabledState()
+    }
+    
+    /// Update text mode cell's cycle steps label according to current routine state
+    func updateTextModeCycleStepsLabel() {
+        textModeCycleStepsLabel.stringValue = "\(textModeCycleStepsStepper.integerValue + 1)/\(Int(textModeCycleStepsStepper.maxValue + 1))"
+    }
+    
+    /// Update text mode cell's animation delay label according to delay slider value
+    func updateTextModeAnimationDelayLabel() {
+        textModeAnimationDelayLabel.stringValue = textModeAnimationDelaySlider.stringValue
+    }
+    
+    /// Get text animation instance for the routine
+    /// - Returns: Animation keyword, if exists, nil otherwise
+    /// - Parameter withDelay: true if delay value should be appended to string
+    func getTextAnimation(withDelay: Bool) -> String? {
+        switch textModeAnimationSegmentedControl.indexOfSelectedItem {
+        case 1:
+            return withDelay ? "<a%BLI%<e\(textModeAnimationDelaySlider.stringValue)" : "<a%BLI%"
+        case 2:
+            return withDelay ? "<a%SCR%<e\(textModeAnimationDelaySlider.stringValue)" : "<a%SCR%"
+        default:
+            return nil
+        }
+    }
+    
+    /// Get color string for sending to the device
+    /// - Returns: Color-respresenting string for the device
+    func getColor() -> String {
+        let colorComponent: String!
+        switch textModeColorModePopUpButton.indexOfSelectedItem {
+        case 1:
+            colorComponent = "%RND%"
+        case 2:
+            colorComponent = "%CHRND%"
+        case 3:
+            colorComponent = "%TLL%"
+        default:
+            colorComponent = colorString(from: textModeColorWell.color)
+        }
+        return colorComponent
+    }
+    
+    /// Get color instance for the routine
+    /// - Returns: String or NSColor packed in a tuple
+    func getColor() -> (String?, NSColor?) {
+        switch textModeColorModePopUpButton.indexOfSelectedItem {
+        case 1:
+            return ("%RND%", nil)
+        case 2:
+            return ("%CHRND%", nil)
+        case 3:
+            return ("%TLL%", nil)
+        default:
+            return (nil, textModeColorWell.color)
+        }
     }
     
     /// Set system mode
@@ -382,7 +573,7 @@ class MenuViewController: NSViewController {
                 textModeCycleStepsStepper,
                 textModeCycleStepAddButton,
                 textModeCycleStepRemoveButton,
-                textModeCycleStepClearButton,
+                textModeCycleStepsClearButton,
                 textModeCycleDelayTextField,
                 textModeCycleDelayStepper
             ],
@@ -432,7 +623,7 @@ class MenuViewController: NSViewController {
             textModeCycleStepsStepper,
             textModeCycleStepAddButton,
             textModeCycleStepRemoveButton,
-            textModeCycleStepClearButton,
+            textModeCycleStepsClearButton,
             textModeCycleDelayTextField,
             textModeCycleDelayStepper
         ]
@@ -449,7 +640,7 @@ class MenuViewController: NSViewController {
         }
     }
     
-    /// Set Delay Slider to a corresponding state
+    /// Set Delay Slider and Fade Button to a corresponding state
     private func suitTextCellAnimationControlsEnabledState() {
         let b = textModeAnimationSegmentedControl.indexOfSelectedItem != 0
         textModeAnimationDelaySlider.isEnabled = b

@@ -46,4 +46,16 @@ class SystemMethods {
         #endif
     }
     
+    /// Get first existing value from a tuple of two
+    /// - Parameter from: Tuple to extract a value from
+    /// - Returns: First existing value if any, nil if none
+    public static func firstExisting(_ from:(Any?, Any?)) -> Any? {
+        if let a = from.0 {
+            return a
+        } else if let b = from.1 {
+            return b
+        }
+        return nil
+    }
+    
 }

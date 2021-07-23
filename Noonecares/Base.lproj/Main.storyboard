@@ -200,7 +200,7 @@
                                                     <stackView distribution="fillEqually" orientation="horizontal" alignment="centerY" spacing="5" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="BxM-vd-J0l" userLabel="Parameters Controls Stack View">
                                                         <rect key="frame" x="120" y="0.0" width="232" height="23"/>
                                                         <subviews>
-                                                            <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Dzv-iz-RSV">
+                                                            <textField verticalHuggingPriority="750" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Dzv-iz-RSV">
                                                                 <rect key="frame" x="0.0" y="1" width="75" height="21"/>
                                                                 <constraints>
                                                                     <constraint firstAttribute="width" constant="75" id="Had-Cw-8fV"/>
@@ -209,9 +209,12 @@
                                                                     <font key="font" metaFont="system"/>
                                                                     <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                                    <allowedInputSourceLocales>
+                                                                        <string>NSAllRomanInputSourcesLocaleIdentifier</string>
+                                                                    </allowedInputSourceLocales>
                                                                 </textFieldCell>
                                                                 <connections>
-                                                                    <action selector="textModeTextFieldValueChanged:" target="XfG-lQ-9wD" id="l1O-RD-uDT"/>
+                                                                    <action selector="textModeTextFieldValueChanged:" target="XfG-lQ-9wD" id="OH4-A8-zeK"/>
                                                                 </connections>
                                                             </textField>
                                                             <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="cQK-xf-Flr">
@@ -306,7 +309,7 @@
                                                             </textField>
                                                             <slider horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="fiN-ek-klY">
                                                                 <rect key="frame" x="38" y="-3" width="28" height="29"/>
-                                                                <sliderCell key="cell" continuous="YES" enabled="NO" alignment="left" minValue="1" maxValue="20" doubleValue="1" sliderType="circular" id="YQe-UA-NFY">
+                                                                <sliderCell key="cell" continuous="YES" enabled="NO" alignment="left" minValue="1" maxValue="20" doubleValue="3" sliderType="circular" id="YQe-UA-NFY">
                                                                     <numberFormatter key="formatter" formatterBehavior="default10_4" usesGroupingSeparator="NO" formatWidth="-1" groupingSize="0" minimumIntegerDigits="1" maximumIntegerDigits="42" id="JEQ-nq-VtI"/>
                                                                 </sliderCell>
                                                                 <connections>
@@ -361,11 +364,11 @@
                                             <stackView distribution="equalSpacing" orientation="horizontal" alignment="centerY" spacing="10" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oEg-bu-7SJ" userLabel="Text Cycle Controls Stack View">
                                                 <rect key="frame" x="0.0" y="0.0" width="352" height="23"/>
                                                 <subviews>
-                                                    <stackView distribution="fillEqually" orientation="horizontal" alignment="centerY" spacing="2" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gBH-dq-EgX" userLabel="Main Controls Stack View">
-                                                        <rect key="frame" x="0.0" y="1" width="78" height="21"/>
+                                                    <stackView distribution="fill" orientation="horizontal" alignment="centerY" spacing="5" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" translatesAutoresizingMaskIntoConstraints="NO" id="gBH-dq-EgX" userLabel="Main Controls Stack View">
+                                                        <rect key="frame" x="0.0" y="1" width="98" height="21"/>
                                                         <subviews>
                                                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="6t9-bP-0xi">
-                                                                <rect key="frame" x="-2" y="3" width="42" height="16"/>
+                                                                <rect key="frame" x="-2" y="3" width="38" height="16"/>
                                                                 <textFieldCell key="cell" lineBreakMode="clipping" title="Cycle" id="kBT-RL-WHa">
                                                                     <font key="font" usesAppearanceFont="YES"/>
                                                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -373,30 +376,35 @@
                                                                 </textFieldCell>
                                                             </textField>
                                                             <switch horizontalHuggingPriority="750" verticalHuggingPriority="750" enabled="NO" baseWritingDirection="leftToRight" alignment="left" translatesAutoresizingMaskIntoConstraints="NO" id="IbR-b5-1uG">
-                                                                <rect key="frame" x="38" y="-2" width="42" height="24"/>
+                                                                <rect key="frame" x="37" y="-2" width="42" height="24"/>
                                                                 <connections>
                                                                     <action selector="textModeCycleSwitchSwitched:" target="XfG-lQ-9wD" id="Mhj-48-7fm"/>
                                                                 </connections>
                                                             </switch>
+                                                            <progressIndicator wantsLayer="YES" maxValue="100" displayedWhenStopped="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="YiF-mG-NN4">
+                                                                <rect key="frame" x="82" y="3" width="16" height="16"/>
+                                                            </progressIndicator>
                                                         </subviews>
                                                         <visibilityPriorities>
+                                                            <integer value="1000"/>
                                                             <integer value="1000"/>
                                                             <integer value="1000"/>
                                                         </visibilityPriorities>
                                                         <customSpacing>
                                                             <real value="3.4028234663852886e+38"/>
                                                             <real value="3.4028234663852886e+38"/>
+                                                            <real value="3.4028234663852886e+38"/>
                                                         </customSpacing>
                                                     </stackView>
                                                     <stackView distribution="fillEqually" orientation="horizontal" alignment="centerY" spacing="5" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hhn-A2-jSH" userLabel="Step Controls Stack View">
-                                                        <rect key="frame" x="123" y="1" width="95" height="22"/>
+                                                        <rect key="frame" x="133" y="1" width="95" height="22"/>
                                                         <subviews>
                                                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="YRb-iK-0vh">
                                                                 <rect key="frame" x="-2" y="3" width="29" height="16"/>
                                                                 <constraints>
                                                                     <constraint firstAttribute="width" constant="25" id="6Xc-Mw-MEo"/>
                                                                 </constraints>
-                                                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="right" title="1/2" id="3NB-GJ-mgW">
+                                                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="right" title="1/1" id="3NB-GJ-mgW">
                                                                     <font key="font" metaFont="system"/>
                                                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -404,7 +412,7 @@
                                                             </textField>
                                                             <stepper horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="cZK-lm-ARd">
                                                                 <rect key="frame" x="27" y="-3" width="19" height="28"/>
-                                                                <stepperCell key="cell" continuous="YES" enabled="NO" alignment="left" maxValue="100" id="EaQ-Dw-KsC"/>
+                                                                <stepperCell key="cell" continuous="YES" enabled="NO" alignment="left" id="EaQ-Dw-KsC"/>
                                                                 <connections>
                                                                     <action selector="textModeCycleStepsStepperValueChanged:" target="XfG-lQ-9wD" id="Bu5-An-Y06"/>
                                                                 </connections>
@@ -494,7 +502,7 @@
                                                                 <constraints>
                                                                     <constraint firstAttribute="width" constant="30" id="Vqc-MN-cVx"/>
                                                                 </constraints>
-                                                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" enabled="NO" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" title="10" placeholderString="sec" drawsBackground="YES" id="wPq-zl-cTm">
+                                                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" enabled="NO" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" title="2" placeholderString="sec" drawsBackground="YES" id="wPq-zl-cTm">
                                                                     <numberFormatter key="formatter" formatterBehavior="default10_4" usesGroupingSeparator="NO" formatWidth="-1" groupingSize="0" minimumIntegerDigits="1" maximumIntegerDigits="42" id="bnE-oO-tmg">
                                                                         <real key="minimum" value="1"/>
                                                                         <real key="maximum" value="10"/>
@@ -509,7 +517,7 @@
                                                             </textField>
                                                             <stepper horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="n9T-Ki-hSx">
                                                                 <rect key="frame" x="73" y="-3" width="19" height="28"/>
-                                                                <stepperCell key="cell" enabled="NO" alignment="left" minValue="1" maxValue="120" doubleValue="10" autorepeat="NO" id="7PX-j4-6jA"/>
+                                                                <stepperCell key="cell" enabled="NO" alignment="left" minValue="1" maxValue="10" doubleValue="2" autorepeat="NO" id="7PX-j4-6jA"/>
                                                                 <connections>
                                                                     <action selector="textModeCycleDelayStepperValueChanged:" target="XfG-lQ-9wD" id="ACU-lc-Lbw"/>
                                                                 </connections>
@@ -1094,9 +1102,10 @@
                         <outlet property="textModeColorWell" destination="WBQ-zf-rod" id="UFU-L2-kYF"/>
                         <outlet property="textModeCycleDelayStepper" destination="n9T-Ki-hSx" id="fyM-4Q-SOE"/>
                         <outlet property="textModeCycleDelayTextField" destination="JBr-yk-oRG" id="0Dh-eE-Bp0"/>
+                        <outlet property="textModeCycleProgressIndicator" destination="YiF-mG-NN4" id="qjQ-qE-kyq"/>
                         <outlet property="textModeCycleStepAddButton" destination="MZG-G5-aUg" id="ZjD-i1-Gn0"/>
-                        <outlet property="textModeCycleStepClearButton" destination="rph-J8-9d0" id="7yI-h4-4o5"/>
                         <outlet property="textModeCycleStepRemoveButton" destination="Zl3-XK-YVf" id="RhQ-4O-odn"/>
+                        <outlet property="textModeCycleStepsClearButton" destination="rph-J8-9d0" id="sVc-nG-v3G"/>
                         <outlet property="textModeCycleStepsLabel" destination="YRb-iK-0vh" id="KO1-ff-psn"/>
                         <outlet property="textModeCycleStepsStepper" destination="cZK-lm-ARd" id="WKd-hm-xrA"/>
                         <outlet property="textModeCycleSwitch" destination="IbR-b5-1uG" id="FJy-40-ex6"/>
