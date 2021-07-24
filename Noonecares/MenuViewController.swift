@@ -133,6 +133,7 @@ class MenuViewController: NSViewController {
     @IBOutlet weak var keyTraceModeColorModePopUpButton: NSPopUpButton!
     @IBAction func keyTraceModeColorModePopUpButtonPressed(_ sender: Any) {
         setApplianceLabel(.notApplied)
+        suitKeyTraceCellColorWellEnabledState()
     }
     @IBOutlet weak var keyTraceModeColorWell: NSColorWell!
     @IBAction func keyTraceModeColorWellValueChanged(_ sender: Any) {
@@ -241,11 +242,13 @@ class MenuViewController: NSViewController {
     //*********************************************************************
     // MARK: VARS & CONSTS
     //*********************************************************************
-    var systemMode = SystemProperties.Mode.off
-    var modeApplied = true
-    public static var connectionState = SystemProperties.ConnectionState.disconnected
     private static var serialPort: ORSSerialPort!
-    static var k = Keylogger()
+    public static var connectionState = SystemProperties.ConnectionState.disconnected
+    public static var keylogger = Keylogger()
+    public static var keyTraceColor: String?
+    public static var systemCurrentMode = SystemProperties.Mode.off
+    var systemTargetMode = SystemProperties.Mode.off
+    var modeApplied = true
     var routineTimer: Timer?
     var textCycleRoutine: [TextCycleStep] = []
     var currentRoutineIndex = 0
@@ -253,21 +256,20 @@ class MenuViewController: NSViewController {
     //*********************************************************************
     // MARK: MAIN FUNCTIONS
     //*********************************************************************
+    override var representedObject: Any? {
+        didSet {
+        // Update the view, if already loaded.
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        MenuViewController.k.start()
     }
     
     override func viewDidAppear() {
         NSApplication.shared.activate(ignoringOtherApps: true)
         insertToTextCycleRoutine(inserting: true)
         if MenuViewController.connectionState != .connected { establishConnection() }
-    }
-    
-    override var representedObject: Any? {
-        didSet {
-        // Update the view, if already loaded.
-        }
     }
     
     /// Send a command to the device via serial port
@@ -278,6 +280,13 @@ class MenuViewController: NSViewController {
             return
         }
         MenuViewController.serialPort.send(d)
+    }
+    
+    /// Send key to the device
+    /// - Parameter key: Key, received from keylogger
+    public static func registerKeyloggerEvent(_ key: String) {
+        guard let color = keyTraceColor, systemCurrentMode == .keyTrace else { return }
+        MenuViewController.sendCommand("ACH<h\(key)<c\(color)/")
     }
     
     /// Do routine task
@@ -328,10 +337,14 @@ class MenuViewController: NSViewController {
     
     /// Create from UI and send a command to the matix
     func composeAndExecuteCommand() {
+        if MenuViewController.systemCurrentMode == .keyTrace && MenuViewController.systemCurrentMode != systemTargetMode {
+            MenuViewController.keylogger.stop()
+            SystemMethods.log("Keylogger stopped")
+        }
         textModeCycleProgressIndicator.stopAnimation(nil)
         routineTimer?.invalidate()
         let command: String!
-        switch systemMode {
+        switch systemTargetMode {
         case .text:
             guard textModeTextField.stringValue != "" else { setApplianceLabel(.corruptedParameters); return }
             if textModeCycleSwitch.state == .on && textModeCycleSwitch.isEnabled {
@@ -345,7 +358,12 @@ class MenuViewController: NSViewController {
                 return
             }
             let fadeComponent = (textModeAnimationFadeButton.state == .on && textModeAnimationFadeButton.isEnabled) ? "<i" : ""
-            command = "RTX<t\(textModeTextField.stringValue)<c\(getColor() + fadeComponent + (getTextAnimation(withDelay: true) ?? ""))/"
+            command = "RTX<t\(textModeTextField.stringValue)<c\(getColor(forMode: .text) + fadeComponent + (getTextAnimation(withDelay: true) ?? ""))/"
+        case .keyTrace:
+            command = "CLR/"
+            MenuViewController.keyTraceColor = getColor(forMode: .keyTrace)
+            MenuViewController.keylogger.start()
+            SystemMethods.log("Keylogger started")
         case .off:
             command = "CLR/"
         default:
@@ -355,6 +373,7 @@ class MenuViewController: NSViewController {
         SystemMethods.log("Sending \(command!)...")
         MenuViewController.sendCommand(command)
         setApplianceLabel(.applied)
+        MenuViewController.systemCurrentMode = systemTargetMode
     }
     
     /// Check cycle for validity
@@ -372,7 +391,7 @@ class MenuViewController: NSViewController {
         if let animation = getTextAnimation(withDelay: false) {
             animationOut = (animation, textModeAnimationDelaySlider.integerValue)
         }
-        let element = TextCycleStep(text: textModeTextField.stringValue, color: getColor(), animation: animationOut, fade: (textModeAnimationFadeButton.isEnabled && textModeAnimationFadeButton.state == .on))
+        let element = TextCycleStep(text: textModeTextField.stringValue, color: getColor(forMode: .text), animation: animationOut, fade: (textModeAnimationFadeButton.isEnabled && textModeAnimationFadeButton.state == .on))
         if inserting {
             textCycleRoutine.insert(element, at: textModeCycleStepsStepper.integerValue)
         } else if clearing {
@@ -448,25 +467,28 @@ class MenuViewController: NSViewController {
     
     /// Get color string for sending to the device
     /// - Returns: Color-respresenting string for the device
-    func getColor() -> String {
-        let colorComponent: String!
-        switch textModeColorModePopUpButton.indexOfSelectedItem {
+    /// - Parameter forMode: Cell to get data from. Only supports .text and .keyTrace
+    func getColor(forMode: SystemProperties.Mode) -> String {
+        let index = forMode == .text ? textModeColorModePopUpButton.indexOfSelectedItem : keyTraceModeColorModePopUpButton.indexOfSelectedItem
+        switch index {
         case 1:
-            colorComponent = "%RND%"
+            return "%RND%"
         case 2:
-            colorComponent = "%CHRND%"
+            return "%CHRND%"
         case 3:
-            colorComponent = "%TLL%"
+            return "%TLL%"
         default:
-            colorComponent = colorString(from: textModeColorWell.color)
+            let color = forMode == .text ? colorString(from: textModeColorWell.color) : colorString(from: keyTraceModeColorWell.color)
+            return color
         }
-        return colorComponent
     }
     
     /// Get color instance for the routine
     /// - Returns: String or NSColor packed in a tuple
-    func getColor() -> (String?, NSColor?) {
-        switch textModeColorModePopUpButton.indexOfSelectedItem {
+    /// - Parameter forMode: Cell to get data from. Only supports .text and .keyTrace
+    func getColor(forMode: SystemProperties.Mode) -> (String?, NSColor?) {
+        let index = forMode == .text ? textModeColorModePopUpButton.indexOfSelectedItem : keyTraceModeColorModePopUpButton.indexOfSelectedItem
+        switch index {
         case 1:
             return ("%RND%", nil)
         case 2:
@@ -474,7 +496,8 @@ class MenuViewController: NSViewController {
         case 3:
             return ("%TLL%", nil)
         default:
-            return (nil, textModeColorWell.color)
+            let color = forMode == .text ? textModeColorWell.color : keyTraceModeColorWell.color
+            return (nil, color)
         }
     }
     
@@ -483,7 +506,7 @@ class MenuViewController: NSViewController {
     ///   - to: Mode to switch to
     ///   - forceModeButton: Whether to explicitly order the corresponding mode button to set its state to 'on'
     func setMode(to: SystemProperties.Mode, forceModeButton: Bool = false) {
-        systemMode = to
+        systemTargetMode = to
         setModeButtonsState(to: .off, except: to.rawValue, force: forceModeButton)
         setCellsEnabledState(to: false, except: to.rawValue, revert: true)
     }
@@ -578,8 +601,7 @@ class MenuViewController: NSViewController {
                 textModeCycleDelayStepper
             ],
             [
-                keyTraceModeColorModePopUpButton,
-                keyTraceModeColorWell
+                keyTraceModeColorModePopUpButton
             ],
             [
                 CCPSModeSavedFileComboBox
@@ -601,11 +623,13 @@ class MenuViewController: NSViewController {
                 if revert {
                     for j in 0...allCells[i].count - 1 {
                         allCells[i][j]?.isEnabled = !to
-                        if j == 6 {  // Animation Delay Slider and elements of the Cycle Cell must be set in a specific way
+                        if i == 0 && j == 6 {  // Animation Delay Slider and elements of the Cycle Cell must be set in a specific way
                             suitTextCellCycleElementsEnabledState()
                             suitTextCellAnimationControlsEnabledState()
                             suitTextCellColorWellEnabledState()
                             break
+                        } else if i == 1 {  // So must be KeyTrace cell's Color Well
+                            suitKeyTraceCellColorWellEnabledState()
                         }
                     }
                 }
@@ -647,9 +671,14 @@ class MenuViewController: NSViewController {
         textModeAnimationFadeButton.isEnabled = !b
     }
     
-    /// Set Color Well to a corresponding state
+    /// Set Text cell's Color Well to a corresponding state
     private func suitTextCellColorWellEnabledState() {
         textModeColorWell.isEnabled = textModeColorModePopUpButton.indexOfSelectedItem == 0
+    }
+    
+    /// Set KeyTrace cell's Color Well to a corresponding state
+    private func suitKeyTraceCellColorWellEnabledState() {
+        keyTraceModeColorWell.isEnabled = keyTraceModeColorModePopUpButton.indexOfSelectedItem == 0
     }
     
     /// Get command-formatted string representing specific color

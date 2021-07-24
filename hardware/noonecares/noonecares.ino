@@ -279,8 +279,7 @@ void executeCommand(String name, String args[CMD_ARGS_COUNT][2]) {
         currentCharSequence += character;
         safePrint(currentCharSequence, colors, true);
     } else if (name == "CLR") {               // Clear the matrix
-        matrix.fillScreen(0);
-        matrix.show();
+        clearMatrix();
     } else if (name == "PNG") {               // ACK the sender
         Serial.println("pong");
     } else if (name == "CLK") {               // Enter clock mode
