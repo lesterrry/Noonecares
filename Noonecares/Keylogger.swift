@@ -11,14 +11,12 @@ import Foundation
 import IOKit.hid
 import Cocoa
 
-class Keylogger
-{
+class Keylogger {  // TODO: Sometimes all the thing just stops working until I log out and back in
     var manager: IOHIDManager
-    var deviceList = NSArray()                  // Used in multiple matching dictionary
+    var deviceList = NSArray()
+    fileprivate var isStarted = false
     
-    init()
-    {
-        // TODO: Sometimes all the thing just stops working until I reboot my Mac
+    init() {
         manager = IOHIDManagerCreate(kCFAllocatorDefault, IOOptionBits(kIOHIDOptionsTypeNone))
 
         if (CFGetTypeID(manager) != IOHIDManagerGetTypeID())
@@ -36,41 +34,40 @@ class Keylogger
         
         /* Open HID Manager */
         let ioreturn: IOReturn = openHIDManager()
-        if ioreturn != kIOReturnSuccess
+        if ioreturn != kIOReturnAborted
         {
-            SystemMethods.log("Could't open manager")
+            SystemMethods.log("Couldn't open manager: \(ioreturn)")
         }
-
     }
 
     /* For Keyboard */
-    func CreateDeviceMatchingDictionary(inUsagePage: Int ,inUsage: Int ) -> CFMutableDictionary
-    {    
+    func CreateDeviceMatchingDictionary(inUsagePage: Int, inUsage: Int) -> CFMutableDictionary {
         let resultAsSwiftDic = [kIOHIDDeviceUsagePageKey: inUsagePage, kIOHIDDeviceUsageKey : inUsage]
         let resultAsCFDic: CFMutableDictionary = resultAsSwiftDic as! CFMutableDictionary
         return resultAsCFDic
     }
     
-    func openHIDManager() -> IOReturn
-    {
-        return IOHIDManagerOpen(manager, IOOptionBits(kIOHIDOptionsTypeNone));
+    func openHIDManager() -> IOReturn {
+        return IOHIDManagerOpen(manager, IOOptionBits(kIOHIDOptionsTypeNone))
     }
     
     /* Scheduling the HID Loop */
-    func start()
-    {
+    func start() {
+        if isStarted { return }
         IOHIDManagerScheduleWithRunLoop(manager, CFRunLoopGetMain(), CFRunLoopMode.defaultMode.rawValue)
+        isStarted = true
     }
     
     /* Un-scheduling the HID Loop */
-    func stop()
-    {
-        IOHIDManagerUnscheduleFromRunLoop(manager, CFRunLoopGetMain(), CFRunLoopMode.defaultMode.rawValue);
+    func stop() {
+        if !isStarted { return }
+        IOHIDManagerUnscheduleFromRunLoop(manager, CFRunLoopGetMain(), CFRunLoopMode.defaultMode.rawValue)
+        isStarted = false
+        print("Stop")
     }
     
     
-    var keyMap: [UInt32:[String]]
-    {
+    var keyMap: [UInt32:[String]] {
         var map = [UInt32:[String]]()
         map[4] =  ["a","A"]
         map[5] =  ["b","B"]
@@ -113,26 +110,50 @@ class Keylogger
         map[46] = ["=","+"]
         map[47] = ["[","{"]
         map[48] = ["]","}"]
-        map[50] = ["",""] // Keyboard Non-US# and ~2
+        map[50] = ["",  ""]  // Keyboard Non-US# and ~2
         map[51] = [";",":"]
-        map[52] = ["'","\""]
         map[54] = [",","<"]
         map[55] = [".",">"]
         // Keypads
         map[85] = ["*","*"]
         map[86] = ["-","-"]
         map[87] = ["+","+"]
-        map[89] = ["1",""]
-        map[90] = ["2",""]
-        map[91] = ["3",""]
-        map[92] = ["4",""]
+        map[89] = ["1", ""]
+        map[90] = ["2", ""]
+        map[91] = ["3", ""]
+        map[92] = ["4", ""]
         map[93] = ["5","5"]
-        map[94] = ["6",""]
-        map[95] = ["7",""]
-        map[96] = ["8",""]
-        map[97] = ["9",""]
-        map[98] = ["0",""]
+        map[94] = ["6", ""]
+        map[95] = ["7", ""]
+        map[96] = ["8", ""]
+        map[97] = ["9", ""]
+        map[98] = ["0", ""]
         return map
     }
+}
 
+class CallBackFunctions {
+    static var lastChar = "" // For some reason, every event gets triggered twice. I made this lazy and silly thing to avoid this.
+    static let Handle_IOHIDInputValueCallback: IOHIDValueCallback = { context, result, sender, device in
+        let myself = Unmanaged<Keylogger>.fromOpaque(context!).takeUnretainedValue()
+        let elem: IOHIDElement = IOHIDValueGetElement(device);
+        if (IOHIDElementGetUsagePage(elem) != 0x07) {
+            return
+        }
+        let scancode = IOHIDElementGetUsage(elem);
+        if (scancode < 4 || scancode > 231 || scancode == 57 || (scancode >= 224 && scancode <= 231)) {
+            return
+        }
+        let pressed = IOHIDValueGetIntegerValue(device);
+        if pressed == 1 {
+            if let key = myself.keyMap[scancode]?[0] {
+                if key != lastChar {
+                    lastChar = key
+                    MenuViewController.registerKeyloggerEvent(key)
+                } else {
+                    lastChar = ""
+                }
+            }
+        }
+    }
 }

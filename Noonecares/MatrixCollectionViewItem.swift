@@ -12,6 +12,8 @@ class MatrixCollectionViewItem: NSCollectionViewItem {
     @IBOutlet weak var colorWell: NSColorWell!
     @IBAction func colorSelected(_ sender: Any) {
         let index = MatrixViewController.colorWellKeys.firstIndex(of: (sender as! NSColorWell).hash)
+        let s = sender as! NSColorWell
+        print("i: \(index), c: \(s.color.asString())")
     }
     
     var index: Int! {
@@ -23,5 +25,4 @@ class MatrixCollectionViewItem: NSCollectionViewItem {
         super.viewDidLoad()
         view.wantsLayer = true
     }
-    
 }

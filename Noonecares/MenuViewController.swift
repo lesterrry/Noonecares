@@ -320,7 +320,7 @@ class MenuViewController: NSViewController {
         if let s = from.color.0 {
             colorCompoment = s
         } else if let s = from.color.1 {
-            colorCompoment = colorString(from: s)
+            colorCompoment = s.asString()
         } else {
             fatalError("Color error")
         }
@@ -478,7 +478,7 @@ class MenuViewController: NSViewController {
         case 3:
             return "%TLL%"
         default:
-            let color = forMode == .text ? colorString(from: textModeColorWell.color) : colorString(from: keyTraceModeColorWell.color)
+            let color = forMode == .text ? textModeColorWell.color.asString() : keyTraceModeColorWell.color.asString()
             return color
         }
     }
@@ -681,13 +681,6 @@ class MenuViewController: NSViewController {
         keyTraceModeColorWell.isEnabled = keyTraceModeColorModePopUpButton.indexOfSelectedItem == 0
     }
     
-    /// Get command-formatted string representing specific color
-    /// - Parameter from: Color for string to represent
-    /// - Returns: Command-formatted string
-    private func colorString(from: NSColor) -> String {
-        return "\(Int(from.redComponent * 255)),\(Int(from.greenComponent * 255)),\(Int(from.blueComponent * 255))"
-    }
-    
 }
 
 extension MenuViewController {
@@ -700,5 +693,13 @@ extension MenuViewController {
             fatalError("No controller found")
     }
         return viewController
+    }
+}
+
+extension NSColor {
+    /// Get command-formatted string representing specific color
+    /// - Returns: Command-formatted string
+    func asString() -> String {
+        return "\(Int(self.redComponent * 255)),\(Int(self.greenComponent * 255)),\(Int(self.blueComponent * 255))"
     }
 }

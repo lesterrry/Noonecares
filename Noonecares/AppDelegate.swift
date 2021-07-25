@@ -7,7 +7,6 @@
 
 import Cocoa
 
-#warning("XCode versions conflict")
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
     let statusItem = NSStatusBar.system.statusItem(withLength:NSStatusItem.squareLength)
@@ -16,7 +15,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         // Insert code here to initialize your application
         if let button = statusItem.button {
-            // MARK: 'NoOneLogo' changed to 'noonelogo' in Assets
+            // 'NoOneLogo' changed to 'noonelogo' in Assets
             button.image = NSImage(named:NSImage.Name("noonelogo"))
             button.action = #selector(togglePopover(_:))
         }
@@ -42,7 +41,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {
-        // Insert code here to tear down your application
+        MenuViewController.keylogger.stop()
     }
     
 }

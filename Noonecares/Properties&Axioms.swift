@@ -5,6 +5,8 @@
 //  Created by Aydar Nasibullin on 20.07.2021.
 //
 
+import Cocoa
+
 /// Collection of different system attributes
 class SystemProperties {
     

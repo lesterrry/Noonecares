@@ -11,10 +11,10 @@
 ***************************/
 
 // External modules
-#include <Adafruit_GFX.h>                    // Graphics
-#include <Adafruit_NeoMatrix.h>              // Matrix controls
-#include <Adafruit_NeoPixel.h>               // LED strip controls
-#include <Fonts/Org_01.h>                    // Main font
+#include <Adafruit_GFX.h>                     // Graphics
+#include <Adafruit_NeoMatrix.h>               // Matrix controls
+#include <Adafruit_NeoPixel.h>                // LED strip controls
+#include <Fonts/Org_01.h>                     // Main font
 #include <Time.h>
 #include <TimeLib.h>
 
@@ -32,16 +32,18 @@
 #define BLINK_KEYWORD "%BLI%"
 #define SCROLL_KEYWORD "%SCR%"
 
+#define STR_EMPTY ""
+
 // Variables
 int routineTask = 0;                          // Long-lasting task to do as a routine
 int cachedMatrixBrightness = 30;              // Brightness of matrix to revert to
 int counter = 0;                              // Int which controls longer (than 0.05sec) routines
 int routineDelay = 3;                         // Int which controls routine delay
-int scrollLimit = -36;                         // Int which controls scrolling limit
+int scrollLimit = -36;                        // Int which controls scrolling limit
 uint32_t timer;                               // Main routine timer
-String cachedCommandName = "";                // Name of a command to execute in a routine
+String cachedCommandName = STR_EMPTY;         // Name of a command to execute in a routine
 String cachedCommandArgs[CMD_ARGS_COUNT][2];  // Arguments of a command to execute in a routine
-String currentCharSequence = "";              // Current sequence of displayed characters
+String currentCharSequence = STR_EMPTY;       // Current sequence of displayed characters
 bool inoutInDone = false;                     // True if inout animation bounces back
 
 Adafruit_NeoMatrix matrix = Adafruit_NeoMatrix(
@@ -56,7 +58,7 @@ int scrollPos = matrix.width();
 // MARK: Setup
 void setup() {
     int rainbow[7][3] = { { 255, 153, 0 }, { 255, 0, 0 }, { 0, 255, 0 }, { 0, 0, 255 }, { 66, 170, 255 }, { 139, 0, 255 }, { 255, 255, 0 } };
-    String greeting = "NO ONE CARES";
+    String greeting = F("NO ONE CARES");
     matrix.begin();
     matrix.setBrightness(30);
     matrix.setFont(&Org_01);
@@ -78,10 +80,11 @@ void setup() {
 // MARK: Loop
 void loop() {
     if (Serial.available() > 0) {             // Receive data over serial
-        handleCommand(Serial.readStringUntil('/'));
+        String command = Serial.readStringUntil('/');
+        handleCommand(command);
     }
     if (millis() - timer > 5) {               // Main timer routine (0.05sec)
-        counter += 1;
+        counter++;
         switch (routineTask) {
             case 0:                           // No task
                 break;
@@ -100,7 +103,7 @@ void loop() {
                 matrix.show();
                 break;
             }
-            case 3: {
+            case 3: {                        // Blink
                 if (counter == routineDelay) {
                     executeCommand(cachedCommandName, cachedCommandArgs);
                 }
@@ -110,7 +113,7 @@ void loop() {
                 }
                 break;
             }
-            case 4: {
+            case 4: {                        // Scroll
                 if (counter < routineDelay) break;
                 counter = 0;
                 matrix.fillScreen(0);
@@ -121,9 +124,9 @@ void loop() {
                 executeCommand(cachedCommandName, cachedCommandArgs);
                 break;
             }
-            case 1: {
+            case 1: {                       // Inout animation
                 float b = matrix.getBrightness();
-                if (cachedCommandName != "" && b >= 5 && !inoutInDone) {
+                if (cachedCommandName != STR_EMPTY && b >= 5 && !inoutInDone) {
                     float a = (b / 100) * 50;
                     matrix.setBrightness(b - a);
                     matrix.show();
@@ -138,13 +141,13 @@ void loop() {
                     matrix.show();
                 } else if (b >= cachedMatrixBrightness) {
                     routineTask = 0;
-                    cachedCommandName = "";
+                    cachedCommandName = STR_EMPTY;
                     inoutInDone = false;
                 }
                 break;
             }
             default: {
-                reportError("rounot", "032");
+                reportError(F("rounot"), F("032"));
                 routineTask = 0;
             }
         }
@@ -155,53 +158,58 @@ void loop() {
     }
 }
 
+// MARK: Functions
+
+/// Turn every pixel off
 void clearMatrix() {
-    currentCharSequence = "";
+    currentCharSequence = STR_EMPTY;
     matrix.fillScreen(0);
     matrix.show();
 }
 
-void handleCommand(String command) {
+/// Parse and execute command
+/// @param command Command string
+void handleCommand(String &command) {
     routineTask = 0;
     String name = command.substring(0, 3);
-    String argstring = command.substring(3);
-    command = "";
     String args[CMD_ARGS_COUNT][2];
-    int selector = 0;
-    int currentIndex = 0;
-    String currentArg = "";
-    for (int i = 0; i < argstring.length(); i++) {
-        char c = argstring[i];
-        if (c == '<') {
-            if (selector == 1) {
-                reportError("parsel", "011");
-                return;
-            }
-            if (currentArg != "") {
-                args[currentIndex][1] = currentArg;
-                currentArg = "";
-            }
-            currentIndex += 1;
-            selector = 1;
-        } else {
-            switch (selector) {
-                case 0:
-                    reportError("parsel", "012");
+    {
+        String argstring = command.substring(3);
+        command = STR_EMPTY;
+        int selector = 0;
+        int currentIndex = 0;
+        String currentArg = STR_EMPTY;
+        for (int i = 0; i < argstring.length(); i++) {
+            char c = argstring[i];
+            if (c == '<') {
+                if (selector == 1) {
+                    reportError(F("parsel"), F("011"));
                     return;
-                case 1:
-                    args[currentIndex][0] = String(c);
-                    selector = 2;
-                    break;
-                case 2:
-                    currentArg += c;
-                    break;
+                }
+                if (currentArg != STR_EMPTY) {
+                    args[currentIndex][1] = currentArg;
+                    currentArg = STR_EMPTY;
+                }
+                currentIndex++;
+                selector = 1;
+            } else {
+                switch (selector) {
+                    case 0:
+                        reportError(F("parsel"), F("012"));
+                        return;
+                    case 1:
+                        args[currentIndex][0] = String(c);
+                        selector = 2;
+                        break;
+                    case 2:
+                        currentArg += c;
+                        break;
+                }
             }
         }
-    }
-    argstring = "";
-    if (currentArg != "") {
-        args[currentIndex][1] = currentArg;
-        currentArg = "";
+        if (currentArg != STR_EMPTY) {
+            args[currentIndex][1] = currentArg;
+        }
     }
     String s = getArgumentValue(args, "i");
     if (s == EXISTS_KEYWORD) {
@@ -209,11 +217,11 @@ void handleCommand(String command) {
         return;
     }
     s = getArgumentValue(args, "a");
-    if (s != "") {
+    if (s != STR_EMPTY) {
         String d = getArgumentValue(args, "e");
-        if (d != "") {
+        if (d != STR_EMPTY) {
             routineDelay = d.toInt();
-            d = "";
+            d = STR_EMPTY;
         }
         if (s == BLINK_KEYWORD) {
             setTaskCommand(3, name, args);
@@ -222,15 +230,20 @@ void handleCommand(String command) {
         if (s == SCROLL_KEYWORD) {
             String n = getArgumentValue(args, "t");
             scrollLimit = -7 * n.length();
-            n = "";
+            n = STR_EMPTY;
             setTaskCommand(4, name, args);
             return;
         }
     }
+    s = "";
     executeCommand(name, args);
 }
 
-void setTaskCommand(int task, String name, String args[CMD_ARGS_COUNT][2]) {
+/// Add command to routine loop
+/// @param task Task key as listed in loop() routine switch
+/// @param name Command name
+/// @param args Command arguments
+void setTaskCommand(int task, String &name, String args[CMD_ARGS_COUNT][2]) {
     for (int i = 0; i < CMD_ARGS_COUNT; i++) {  // Changing 'inout' parameter to 'derived'
         if (args[i][0] == "i") {
             args[i][0] = "d";
@@ -242,6 +255,8 @@ void setTaskCommand(int task, String name, String args[CMD_ARGS_COUNT][2]) {
     cachedMatrixBrightness = matrix.getBrightness();
 }
 
+/// Fill cached command arguments var with specific args
+/// @param args Arguments to fill the var with
 void refillArgsArray(String args[CMD_ARGS_COUNT][2]) {
     for (int i = 0; i < CMD_ARGS_COUNT; i++) {
         for (int j = 0; j < 2; j++) {
@@ -250,26 +265,29 @@ void refillArgsArray(String args[CMD_ARGS_COUNT][2]) {
     }
 }
 
-void executeCommand(String name, String args[CMD_ARGS_COUNT][2]) {
+/// Execute command with a specific name and arguments
+/// @param name Command name
+/// @param args Command arguments
+void executeCommand(String &name, String args[CMD_ARGS_COUNT][2]) {
     if (name == "RTX") {                      // Just print text
         String text = getArgumentValue(args, "t");
         String sColor = getArgumentValue(args, "c");
         String sAnim = getArgumentValue(args, "a");
-        if (text == "" || sColor == "") {
-            reportError("argnot", "021");
+        if (text == STR_EMPTY || sColor == STR_EMPTY) {
+            reportError(F("argnot"), F("021"));
             return;
         }
         uint16_t colors = getColors(sColor);
-        safePrint(text, colors, sAnim != "%SCR%");
+        safePrint(text, colors, sAnim != SCROLL_KEYWORD);
     } else if (name == "ACH") {               // Append char (!!!) to currently displayed text
         String character = getArgumentValue(args, "h");
         String sColor = getArgumentValue(args, "c");
-        if (character == "" || sColor == "") {
-            reportError("argnot", "021");
+        if (character == STR_EMPTY || sColor == STR_EMPTY) {
+            reportError(F("argnot"), F("021"));
             return;
         }
         if (character.length() > 1) {
-            reportError("notchar", "041");
+            reportError(F("notchar"), F("041"));
             return;
         }
         uint16_t colors = getColors(sColor);
@@ -280,34 +298,41 @@ void executeCommand(String name, String args[CMD_ARGS_COUNT][2]) {
         safePrint(currentCharSequence, colors, true);
     } else if (name == "CLR") {               // Clear the matrix
         clearMatrix();
+    } else if (name == "CPS") {               // Draw CCPS
+        String ccps = getArgumentValue(args, "s");
+        if (ccps == STR_EMPTY) {
+            reportError(F("argnot"), F("021"));
+            return;
+        }
+        drawCCPS(ccps);
     } else if (name == "PNG") {               // ACK the sender
-        Serial.println("pong");
+        Serial.println(F("pong"));
     } else if (name == "CLK") {               // Enter clock mode
         String time = getArgumentValue(args, "t");
-        if (time == "") {
-            reportError("argnot", "021");
+        if (time == STR_EMPTY) {
+            reportError(F("argnot"), F("021"));
             return;
         }
         int values[6];
         int currentIndex = 0;
-        String currentValue = "";
+        String currentValue = STR_EMPTY;
         for (int i = 0; i < time.length(); i++) {
             char c = time[i];
             if (c == ',') {
-                if (currentValue != "") {
+                if (currentValue != STR_EMPTY) {
                     values[currentIndex] = currentValue.toInt();
-                    currentValue = "";
+                    currentValue = STR_EMPTY;
                 }
-                currentIndex += 1;
+                currentIndex++;
             } else {
                 currentValue += String(c);
             }
         }
-        if (currentValue != "") {
+        if (currentValue != STR_EMPTY) {
             values[currentIndex] = currentValue.toInt();
-            currentValue = "";
+            currentValue = STR_EMPTY;
         }
-        time = "";
+        time = STR_EMPTY;
         setTime(values[0], values[1], values[2], values[3], values[4], values[5]);
         routineTask = 2;
     } else if (name == "BRT") {               // Adjust brightness
@@ -315,15 +340,158 @@ void executeCommand(String name, String args[CMD_ARGS_COUNT][2]) {
         matrix.setBrightness(v);
         matrix.show();
     } else {
-        reportError("cmdnot", "031");
+        reportError(F("cmdnot"), F("031"));
     }
 }
 
-void drawCCPS(String sequence) {
-    
+/// Parse and display Covey's Compressed Pixel Sequence
+/// @param sequence CCPS string
+void drawCCPS(String &sequence) {
+    int currentLEDIndex = 0;
+    int lastColor[] = { 256, 256, 256 };
+    String customColor[] = { STR_EMPTY, STR_EMPTY, STR_EMPTY };
+    int customColorIndex = 0;
+    bool collectingSetCount = false;
+    String setCount = STR_EMPTY;
+    for (int i = 0; i < sequence.length(); i++) {
+        char c = sequence[i];
+        int cint = c;
+        if (cint >= 48 && cint <= 57) {  // If number
+            cint = cint - 48;
+            if (collectingSetCount) {
+                setCount += String(cint);
+            } else {
+                customColor[customColorIndex] += String(cint);
+            }
+        } else {
+            if (customColor[2] != STR_EMPTY) {  // Drawing custom color
+                matrix.setPixelColor(currentLEDIndex, customColor[0].toInt(), customColor[1].toInt(), customColor[2].toInt());
+                customColorIndex = 0;
+                for (int j = 0; j < 3; j++) {
+                    lastColor[j] = customColor[j].toInt();
+                    customColor[j] = STR_EMPTY;
+                }
+                currentLEDIndex++;
+            } else if (collectingSetCount && c != 'i') {  // Drawing non-infinite set
+                int count = setCount.toInt() - 1;
+                for (int j = 0; j < count; j++) {
+                    if (lastColor[0] != 256) {
+                        matrix.setPixelColor(currentLEDIndex, lastColor[0], lastColor[1], lastColor[2]);
+                    }
+                    currentLEDIndex++;
+                }
+                collectingSetCount = false;
+                setCount = STR_EMPTY;
+            }
+            if (c == 'i') {  // Drawing infinite set
+                if (collectingSetCount) {
+                    while (currentLEDIndex < LED_COUNT) {
+                        if (lastColor[0] != 256) {
+                            matrix.setPixelColor(currentLEDIndex, lastColor[0], lastColor[1], lastColor[2]);
+                        }
+                        currentLEDIndex++;
+                    }
+                    collectingSetCount = false;
+                    setCount = STR_EMPTY;
+                } else {
+                    reportError(F("cpscor"), F("051"));
+                }
+            } else if (c == 'W') {
+                matrix.setPixelColor(currentLEDIndex, 255, 255, 255);
+                lastColor[0] = 255;
+                lastColor[1] = 255;
+                lastColor[2] = 255;
+                currentLEDIndex++;
+            } else if (c == 'N') {
+                matrix.setPixelColor(currentLEDIndex, 0, 0, 0);
+                lastColor[0] = 0;
+                lastColor[1] = 0;
+                lastColor[2] = 0;
+                currentLEDIndex++;
+            } else if (c == 'A') {
+                lastColor[0] = 256;
+                lastColor[1] = 256;
+                lastColor[2] = 256;
+                currentLEDIndex++;
+            } else if (c == 'R') {
+                matrix.setPixelColor(currentLEDIndex, 255, 0, 0);
+                lastColor[0] = 255;
+                lastColor[1] = 0;
+                lastColor[2] = 0;
+                currentLEDIndex++;
+            } else if (c == 'G') {
+                matrix.setPixelColor(currentLEDIndex, 0, 255, 0);
+                lastColor[0] = 0;
+                lastColor[1] = 255;
+                lastColor[2] = 0;
+                currentLEDIndex++;
+            } else if (c == 'B') {
+                matrix.setPixelColor(currentLEDIndex, 0, 0, 255);
+                lastColor[0] = 0;
+                lastColor[1] = 0;
+                lastColor[2] = 255;
+                currentLEDIndex++;
+            } else if (c == 'C') {
+                matrix.setPixelColor(currentLEDIndex, 0, 255, 255);
+                lastColor[0] = 0;
+                lastColor[1] = 255;
+                lastColor[2] = 255;
+                currentLEDIndex++;
+            } else if (c == 'M') {
+                matrix.setPixelColor(currentLEDIndex, 255, 0, 255);
+                lastColor[0] = 255;
+                lastColor[1] = 0;
+                lastColor[2] = 255;
+                currentLEDIndex++;
+            } else if (c == 'Y') {
+                matrix.setPixelColor(currentLEDIndex, 255, 255, 0);
+                lastColor[0] = 255;
+                lastColor[1] = 255;
+                lastColor[2] = 0;
+                currentLEDIndex++;
+            } else if (c == 'f') {
+                if (customColor[customColorIndex] != STR_EMPTY) customColorIndex++;
+                customColor[customColorIndex] = "255";
+                customColorIndex++;
+            } else if (c == 'e') {
+                if (customColor[customColorIndex] != STR_EMPTY) customColorIndex++;
+                customColor[customColorIndex] = "0";
+                customColorIndex++;
+            } else if (c == ',') {
+                if (customColor[0] != STR_EMPTY) customColorIndex++;
+            } else if (c == '>') {
+                if (!collectingSetCount) {
+                    collectingSetCount = true;
+                } else {
+                    reportError(F("cpscor"), F("052"));
+                }
+            } else {
+                reportError(F("insnot"), F("033"));
+                return;
+            }
+        }
+    }
+    if (customColor[2] != STR_EMPTY) {  // Drawing custom color
+        matrix.setPixelColor(currentLEDIndex, customColor[0].toInt(), customColor[1].toInt(), customColor[2].toInt());
+    } else if (collectingSetCount) {
+        int count = setCount.toInt() - 1;
+        for (int j = 0; j < count; j++) {  // Drawing non-infinite set
+            if (lastColor[0] != 256) {
+                matrix.setPixelColor(currentLEDIndex, lastColor[0], lastColor[1], lastColor[2]);
+            }
+            currentLEDIndex++;
+        }
+        collectingSetCount = false;
+        setCount = STR_EMPTY;
+    }
+    matrix.show();
 }
 
-void safePrint(String text, uint16_t colors, bool reset) {
+/// Display colored explicitly uppercased text, optionally resetting cursor and clearing the matrix
+/// @param text Text string
+/// @param colors Either 1 for Char Random coloring, 2 for Taillight coloring or a specific color value
+/// @param reset Whether to explicitly clear matrix and reset the cursor
+void safePrint(String &text, uint16_t colors, bool reset) {
     text.toUpperCase();
     if (reset) {
         matrix.setCursor(0, 5);
@@ -358,13 +526,17 @@ void safePrint(String text, uint16_t colors, bool reset) {
     matrix.show();
 }
 
-void safePrint(String text) {
+/// Display explicitly uppercased text, resetting cursor and clearing the matrix
+/// @param text Text string
+void safePrint(String &text) {
     matrix.fillScreen(0);
     text.toUpperCase();
     matrix.print(text);
 }
 
-uint16_t getColors(String from) {
+/// Get color value from comma-separated string or keyword
+/// @param from Color string
+uint16_t getColors(String &from) {
     if (from == CHAR_RANDOM_KEYWORD) {
         return 1;
     } else if (from == TAILLIGHT_KEYWORD) {
@@ -381,25 +553,28 @@ uint16_t getColors(String from) {
     }
     int colors[3];
     int currentIndex = 0;
-    String currentColor = "";
+    String currentColor = STR_EMPTY;
     for (int i = 0; i < from.length(); i++) {
         char c = from[i];
         if (c == ',') {
-            if (currentColor != "") {
+            if (currentColor != STR_EMPTY) {
                 colors[currentIndex] = currentColor.toInt();
-                currentColor = "";
+                currentColor = STR_EMPTY;
             }
-            currentIndex += 1;
+            currentIndex++;
         } else {
             currentColor += String(c);
         }
     }
-    if (currentColor != "") {
+    if (currentColor != STR_EMPTY) {
         colors[currentIndex] = currentColor.toInt();
     }
     return matrix.Color(colors[0], colors[1], colors[2]);
 }
 
+/// Parse arguments array and retrieve a specific value by key
+/// @param forkey Key to get argument value by
+/// @return Either an argument value or a STR_EMPTY keyword, in case none found
 String getArgumentValue(String args[CMD_ARGS_COUNT][2], String forkey) {
     for (int i = 0; i < CMD_ARGS_COUNT; i++) {
         if (args[i][0] == forkey) {
@@ -407,9 +582,12 @@ String getArgumentValue(String args[CMD_ARGS_COUNT][2], String forkey) {
             return args[i][1];
         }
     }
-    return "";
+    return STR_EMPTY;
 }
 
+/// Print error to matrix display and serial port
+/// @param short_message Error message to send to the matrix
+/// @param error_code Error code to print to the serial port
 void reportError(String short_message, String error_code) {
     Serial.println("ER" + error_code);
     matrix.fillScreen(0);

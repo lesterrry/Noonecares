@@ -14,7 +14,7 @@ class MatrixViewController: NSViewController {
     @IBOutlet weak var collectionView: NSCollectionView!
 
     @IBAction func drawButtonPressed(_ sender: Any) {
-        print(MatrixViewController.colorWellKeys)
+    
     }
     @IBAction func saveButtonPressed(_ sender: Any) {
         
@@ -44,3 +44,5 @@ extension MatrixViewController : NSCollectionViewDataSource {
         return item
     }
 }
+
+// TODO: If I someday want to convert images to CCPS, this will come in handy: https://gist.github.com/bpercevic/b5b193c3379b3f048210
