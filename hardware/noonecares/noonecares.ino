@@ -23,6 +23,7 @@
 #define LED_PIN 6
 #define LED_MIN_BRT 4
 #define CMD_ARGS_COUNT 5
+#define TIME_UPDATE_DELAY 900
 
 // Reserved keywords
 #define EXISTS_KEYWORD "%IS%"
@@ -40,6 +41,7 @@ int cachedMatrixBrightness = 30;              // Brightness of matrix to revert 
 int counter = 0;                              // Int which controls longer (than 0.05sec) routines
 int routineDelay = 3;                         // Int which controls routine delay
 int scrollLimit = -36;                        // Int which controls scrolling limit
+int h, m, s;
 uint32_t timer;                               // Main routine timer
 String cachedCommandName = STR_EMPTY;         // Name of a command to execute in a routine
 String cachedCommandArgs[CMD_ARGS_COUNT][2];  // Arguments of a command to execute in a routine
@@ -83,78 +85,79 @@ void loop() {
         String command = Serial.readStringUntil('/');
         handleCommand(command);
     }
-    if (millis() - timer > 5) {               // Main timer routine (0.05sec)
-        counter++;
-        switch (routineTask) {
-            case 0:                           // No task
-                break;
-            case 2: {                         // Clock display
-                if (counter < 8) break;
-                counter = 0;
-                matrix.clear();
-                matrix.setTextColor(matrix.Color(100, 100, 100));
-                int h = hour(), m = minute(), s = second();
-                matrix.setCursor(10, 5);
-                matrix.print(h > 9 ? h : "0" + String(h));
-                matrix.setCursor(30, 5);
-                matrix.print(m > 9 ? m : "0" + String(m));
-                matrix.setCursor(50, 5);
-                matrix.print(s > 9 ? s : "0" + String(s));
-                matrix.show();
-                break;
-            }
-            case 3: {                        // Blink
-                if (counter == routineDelay) {
-                    executeCommand(cachedCommandName, cachedCommandArgs);
+    if (routineTask == 2) {                   // Explicitly check for clock task
+        matrix.clear();
+        h = hour(), m = minute(), s = second();
+        matrix.setCursor(10, 5);
+        if (h < 10) matrix.print("0");
+        matrix.print(h);
+        matrix.setCursor(30, 5);
+        if (m < 10) matrix.print("0");
+        matrix.print(m);
+        matrix.setCursor(50, 5);
+        if (s < 10) matrix.print("0");
+        matrix.print(s);
+        matrix.show();
+        delay(TIME_UPDATE_DELAY);
+    } else {
+        if (millis() - timer > 5) {               // Main timer routine (0.05sec)
+            counter++;
+            switch (routineTask) {
+                case 0:                           // No task
+                    break;
+                case 3: {                         // Blink
+                    if (counter == routineDelay) {
+                        executeCommand(cachedCommandName, cachedCommandArgs);
+                    }
+                    if (counter > routineDelay * 2) {
+                        counter = 0;
+                        clearMatrix();
+                    }
+                    break;
                 }
-                if (counter > routineDelay * 2) {
+                case 4: {                        // Scroll
+                    if (counter < routineDelay) break;
                     counter = 0;
-                    clearMatrix();
-                }
-                break;
-            }
-            case 4: {                        // Scroll
-                if (counter < routineDelay) break;
-                counter = 0;
-                matrix.fillScreen(0);
-                matrix.setCursor(scrollPos, 5);
-                if(--scrollPos < scrollLimit) {
-                    scrollPos = matrix.width();
-                }
-                executeCommand(cachedCommandName, cachedCommandArgs);
-                break;
-            }
-            case 1: {                       // Inout animation
-                float b = matrix.getBrightness();
-                if (cachedCommandName != STR_EMPTY && b >= 5 && !inoutInDone) {
-                    float a = (b / 100) * 50;
-                    matrix.setBrightness(b - a);
-                    matrix.show();
-                } else if (b < cachedMatrixBrightness) {
-                    inoutInDone = true;
-                    float a = (b / 100) * 50;
-                    if (b < LED_MIN_BRT) {
-                        b = LED_MIN_BRT;
+                    matrix.fillScreen(0);
+                    matrix.setCursor(scrollPos, 5);
+                    if(--scrollPos < scrollLimit) {
+                        scrollPos = matrix.width();
                     }
                     executeCommand(cachedCommandName, cachedCommandArgs);
-                    matrix.setBrightness(b + a);
-                    matrix.show();
-                } else if (b >= cachedMatrixBrightness) {
-                    routineTask = 0;
-                    cachedCommandName = STR_EMPTY;
-                    inoutInDone = false;
+                    break;
                 }
-                break;
+                case 1: {                       // Inout animation
+                    float b = matrix.getBrightness();
+                    if (cachedCommandName != STR_EMPTY && b >= 5 && !inoutInDone) {
+                        float a = (b / 100) * 50;
+                        matrix.setBrightness(b - a);
+                        matrix.show();
+                    } else if (b < cachedMatrixBrightness) {
+                        inoutInDone = true;
+                        float a = (b / 100) * 50;
+                        if (b < LED_MIN_BRT) {
+                            b = LED_MIN_BRT;
+                        }
+                        executeCommand(cachedCommandName, cachedCommandArgs);
+                        matrix.setBrightness(b + a);
+                        matrix.show();
+                    } else if (b >= cachedMatrixBrightness) {
+                        routineTask = 0;
+                        cachedCommandName = STR_EMPTY;
+                        inoutInDone = false;
+                    }
+                    break;
+                }
+                default: {
+                    reportError(F("rounot"), F("032"));
+                    routineTask = 0;
+                }
             }
-            default: {
-                reportError(F("rounot"), F("032"));
-                routineTask = 0;
+            if (counter > 1000) {
+                counter = 0;
             }
+            timer = millis();
         }
-        if (counter > 1000) {
-            counter = 0;
-        }
-        timer = millis();
     }
 }
 
@@ -335,6 +338,7 @@ void executeCommand(String &name, String args[CMD_ARGS_COUNT][2]) {
         time = STR_EMPTY;
         setTime(values[0], values[1], values[2], values[3], values[4], values[5]);
         routineTask = 2;
+        matrix.setTextColor(matrix.Color(100, 100, 100));
     } else if (name == "BRT") {               // Adjust brightness
         int v = getArgumentValue(args, "v").toInt();
         matrix.setBrightness(v);

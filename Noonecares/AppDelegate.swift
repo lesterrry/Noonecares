@@ -39,9 +39,4 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func closePopover(sender: Any?) {
       popover.performClose(sender)
     }
-
-    func applicationWillTerminate(_ aNotification: Notification) {
-        MenuViewController.keylogger.stop()
-    }
-    
 }

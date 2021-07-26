@@ -150,4 +150,4 @@ Error codes are returned by some functions if they fail to properly execute. Her
 - `ER033` – unknown CCPS instruction
 - `ER041` – type error: expected *Char*
 - `ER051` – corrupted CCPS: unexpected `i`
-- `ER05` – corrupted CCPS: unexpected `<`
+- `ER052` – corrupted CCPS: unexpected `<`

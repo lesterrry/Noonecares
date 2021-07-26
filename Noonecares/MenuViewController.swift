@@ -227,6 +227,7 @@ class MenuViewController: NSViewController {
     }
     
     @IBAction func quitButtonPressed(_ sender: Any) {
+        MenuViewController.keylogger.stop()
         exit(0)
     }
     @IBOutlet weak var customCommandButton: NSButton!
@@ -339,7 +340,6 @@ class MenuViewController: NSViewController {
     func composeAndExecuteCommand() {
         if MenuViewController.systemCurrentMode == .keyTrace && MenuViewController.systemCurrentMode != systemTargetMode {
             MenuViewController.keylogger.stop()
-            SystemMethods.log("Keylogger stopped")
         }
         textModeCycleProgressIndicator.stopAnimation(nil)
         routineTimer?.invalidate()
@@ -363,11 +363,20 @@ class MenuViewController: NSViewController {
             command = "CLR/"
             MenuViewController.keyTraceColor = getColor(forMode: .keyTrace)
             MenuViewController.keylogger.start()
-            SystemMethods.log("Keylogger started")
+        case .clock:
+            let date = Date()
+            let calendar = Calendar.current
+            let hour = calendar.component(.hour, from: date)
+            let minute = calendar.component(.minute, from: date)
+            let second = calendar.component(.second, from: date)
+            let day = calendar.component(.day, from: date)
+            let month = calendar.component(.month, from: date)
+            let year = calendar.component(.year, from: date)
+            command = "CLK<t\(hour),\(minute),\(second),\(day),\(month),\(year)/"
         case .off:
             command = "CLR/"
         default:
-            setApplianceLabel("Unknown mode", NSColor.red)
+            setApplianceLabel("Not supported", NSColor.red)
             return
         }
         SystemMethods.log("Sending \(command!)...")
