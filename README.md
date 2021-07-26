@@ -29,19 +29,19 @@ Example: `CMD<ahello<b123/`
 - `%BLI%` (blinking animation)
 - `%RND%` (random color)
 - `%CHRND%` (random color of every character)
-- `%TLL%` (tailight coloring)
+- `%TLL%` (taillight coloring)
 
 ### Data model
 Command arguments values represent different data types. This is the reference
 
 - **Int** – number: `123`
 - **String** – case insensitive piece of text excluding reserved keywords and keys: `hello world`
-- **Char** – case insensitive character: 'F'
+- **Char** – case insensitive character: `F`
 - **ExBool** – gets intepreted as `true` if argument is present in the command.
 - **Color** – rgb representation of the color: `Int,Int,Int` / random color: `%RND%` / char random coloring: `%CHRND%` / tailight coloring: `%TLL%`
 - **Animation** – scrolling: `%SCR%` / blinking: `%BLI%`
 - **Time** – time in H,M,S,D,M,Y format: `Int,Int,Int,Int,Int,Int`
-- **CCPS** – [covey's compressed pixel sequence](#ccps) string: `C>3,RRGBWA>6,`
+- **CCPS** – [covey's compressed pixel sequence](#ccps) string: `C>3RRGBWA>6`
 - **Error** – [error code](#error-codes-list) string
 
 ### Command list
