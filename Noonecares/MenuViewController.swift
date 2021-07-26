@@ -13,16 +13,41 @@ class MenuViewController: NSViewController {
     //*********************************************************************
     // MARK: STRUCTURES
     //*********************************************************************
-    /// Step to use in main routine cycle
-    struct TextCycleStep {
-        /// Text to send to the device
-        let text: String
-        /// Color to paint the text. Pass String to the first element if specific coloring is being used, or NSColor to the second
-        let color: (String?, NSColor?)
-        /// Animation value. First element is the animation keyword, second is the delay.
-        let animation: (String, Int)?
-        /// Whether to apply fade animation
-        var fade: Bool = false
+    
+    /// Universal routine step enum
+    enum RoutineStep: Equatable {
+        /// Checking two RoutineStep objects for equality
+        /// - Parameters:
+        ///   - lhs: Left-side object
+        ///   - rhs: Right-side object
+        /// - Returns: Whether two objects are equal
+        static func == (lhs: MenuViewController.RoutineStep, rhs: MenuViewController.RoutineStep) -> Bool {
+            switch lhs {
+            case .Clock:
+                if case .Clock = rhs { return true } else { return false }
+            case .Text(let ltextStep):
+                if case .Text(let rtextStep) = rhs { return ltextStep == rtextStep } else { return false }
+            }
+        }
+        
+        case Text(TextCycleStep)
+        case Clock
+        
+        /// Step to use in main routine cycle
+        struct TextCycleStep: Equatable {
+            static func == (lhs: MenuViewController.RoutineStep.TextCycleStep, rhs: MenuViewController.RoutineStep.TextCycleStep) -> Bool {
+                return lhs.text == rhs.text  // FIXME: Oh that's dumb af but I wont be using this anyway
+            }
+            
+            /// Text to send to the device
+            let text: String
+            /// Color to paint the text. Pass String to the first element if specific coloring is being used, or NSColor to the second
+            let color: (String?, NSColor?)
+            /// Animation value. First element is the animation keyword, second is the delay.
+            let animation: (String, Int)?
+            /// Whether to apply fade animation
+            var fade: Bool = false
+        }
     }
     
     //*********************************************************************
@@ -40,40 +65,40 @@ class MenuViewController: NSViewController {
     @IBAction func textModeButtonPressed(_ sender: Any) {
         setApplianceLabel(.notApplied)
         setMode(to: .text)
-        insertToTextCycleRoutine()
+        insertTextToCycleRoutine()
     }
     @IBOutlet weak var textModeTextField: NSTextField!
     @IBAction func textModeTextFieldValueChanged(_ sender: Any) {
         setApplianceLabel(.notApplied)
-        insertToTextCycleRoutine()
+        insertTextToCycleRoutine()
     }
     @IBOutlet weak var textModeColorModePopUpButton: NSPopUpButton!
     @IBAction func textModeColorModePopUpButtonValueChanged(_ sender: Any) {
         suitTextCellColorWellEnabledState()
         setApplianceLabel(.notApplied)
-        insertToTextCycleRoutine()
+        insertTextToCycleRoutine()
     }
     @IBOutlet weak var textModeColorWell: NSColorWell!
     @IBAction func textModeColorWellValueChanged(_ sender: Any) {
         setApplianceLabel(.notApplied)
-        insertToTextCycleRoutine()
+        insertTextToCycleRoutine()
     }
     @IBOutlet weak var textModeAnimationSegmentedControl: NSSegmentedControl!
     @IBAction func textModeAnimationSegmentedControlValueChanged(_ sender: Any) {
         suitTextCellAnimationControlsEnabledState()
         setApplianceLabel(.notApplied)
-        insertToTextCycleRoutine()
+        insertTextToCycleRoutine()
     }
     @IBOutlet weak var textModeAnimationFadeButton: NSButton!
     @IBAction func textModeAnimationFadeButtonPressed(_ sender: Any) {
         setApplianceLabel(.notApplied)
-        insertToTextCycleRoutine()
+        insertTextToCycleRoutine()
     }
     @IBOutlet weak var textModeAnimationDelaySlider: NSSlider!
     @IBAction func textModeAnimationDelaySliderValueChanged(_ sender: Any) {
         setApplianceLabel(.notApplied)
         updateTextModeAnimationDelayLabel()
-        insertToTextCycleRoutine()
+        insertTextToCycleRoutine()
     }
     @IBOutlet weak var textModeAnimationDelayLabel: NSTextField!
     @IBOutlet weak var textModeCycleSwitch: NSSwitch!
@@ -94,13 +119,13 @@ class MenuViewController: NSViewController {
         textModeCycleStepsStepper.maxValue += 1
         textModeCycleStepsStepper.integerValue += 1
         updateTextModeCycleStepsLabel()
-        insertToTextCycleRoutine(inserting: true)
+        insertTextToCycleRoutine(inserting: true)
     }
     @IBOutlet weak var textModeCycleStepRemoveButton: NSButton!
     @IBAction func textModeCycleStepRemoveButtonPressed(_ sender: Any) {
         setApplianceLabel(.notApplied)
         currentRoutineIndex = 0
-        textCycleRoutine.remove(at: textModeCycleStepsStepper.integerValue)
+        routine.remove(at: textModeCycleStepsStepper.integerValue)
         textModeCycleStepsStepper.maxValue -= 1
         textModeCycleStepsStepper.integerValue -= 1
         updateTextModeCycleStepsLabel()
@@ -112,7 +137,7 @@ class MenuViewController: NSViewController {
         textModeCycleStepsStepper.maxValue = 0
         textModeCycleStepsStepper.integerValue = 0
         updateTextModeCycleStepsLabel()
-        insertToTextCycleRoutine(clearing: true)
+        insertTextToCycleRoutine(clearing: true)
     }
     @IBOutlet weak var textModeCycleDelayTextField: NSTextField!
     @IBAction func textModeCycleDelayTextFieldValueChanged(_ sender: NSTextField) {
@@ -251,7 +276,7 @@ class MenuViewController: NSViewController {
     var systemTargetMode = SystemProperties.Mode.off
     var modeApplied = true
     var routineTimer: Timer?
-    var textCycleRoutine: [TextCycleStep] = []
+    var routine: [RoutineStep] = []
     var currentRoutineIndex = 0
     
     //*********************************************************************
@@ -269,7 +294,7 @@ class MenuViewController: NSViewController {
     
     override func viewDidAppear() {
         NSApplication.shared.activate(ignoringOtherApps: true)
-        insertToTextCycleRoutine(inserting: true)
+        insertTextToCycleRoutine(inserting: true)
         if MenuViewController.connectionState != .connected { establishConnection() }
     }
     
@@ -293,8 +318,13 @@ class MenuViewController: NSViewController {
     /// Do routine task
     @objc
     func performRoutine() {
-        composeAndExecuteCommand(from: textCycleRoutine[currentRoutineIndex])
-        if currentRoutineIndex < textCycleRoutine.count - 1 {
+        switch routine[currentRoutineIndex] {
+        case .Text:
+            composeAndExecuteCommand(from: routine[currentRoutineIndex])
+        case .Clock:
+            MenuViewController.sendCommand("CLK<t\(Calendar.current.currentTimeAsString())/")
+        }
+        if currentRoutineIndex < routine.count - 1 {
             currentRoutineIndex += 1
         } else {
             currentRoutineIndex = 0
@@ -315,23 +345,28 @@ class MenuViewController: NSViewController {
     
     /// Creare from cycle step and send a command to the matix
     /// - Parameter from: Cycle step to use
-    func composeAndExecuteCommand(from: TextCycleStep) {
+    func composeAndExecuteCommand(from: RoutineStep) {
         let command: String!
-        let colorCompoment: String!
-        if let s = from.color.0 {
-            colorCompoment = s
-        } else if let s = from.color.1 {
-            colorCompoment = s.asString()
-        } else {
-            fatalError("Color error")
+        switch from {
+        case .Text(let textStep):
+            let colorCompoment: String!
+            if let s = textStep.color.0 {
+                colorCompoment = s
+            } else if let s = textStep.color.1 {
+                colorCompoment = s.asString()
+            } else {
+                fatalError("Color error")
+            }
+            let animationComponent: String!
+            if let s = textStep.animation {
+                animationComponent = "\(s.0)<e\(s.1)"
+            } else {
+                animationComponent = ""
+            }
+            command = "RTX<t\(textStep.text)<c\(colorCompoment + (textStep.fade ? "<i" : "") + animationComponent)/"
+        case .Clock:
+            command = "CLK<t\(Calendar.current.currentTimeAsString())/"
         }
-        let animationComponent: String!
-        if let s = from.animation {
-            animationComponent = "\(s.0)<e\(s.1)"
-        } else {
-            animationComponent = ""
-        }
-        command = "RTX<t\(from.text)<c\(colorCompoment + (from.fade ? "<i" : "") + animationComponent)/"
         MenuViewController.sendCommand(command)
         setApplianceLabel(.applied)
     }
@@ -349,7 +384,7 @@ class MenuViewController: NSViewController {
             guard textModeTextField.stringValue != "" else { setApplianceLabel(.corruptedParameters); return }
             if textModeCycleSwitch.state == .on && textModeCycleSwitch.isEnabled {
                 guard cycleValid() else { setApplianceLabel(.corruptedParameters); return }
-                insertToTextCycleRoutine()
+                insertTextToCycleRoutine()
                 routineTimer = Timer.scheduledTimer(
                     timeInterval: Double(textModeCycleDelayStepper.integerValue),
                     target: self,
@@ -360,19 +395,16 @@ class MenuViewController: NSViewController {
             let fadeComponent = (textModeAnimationFadeButton.state == .on && textModeAnimationFadeButton.isEnabled) ? "<i" : ""
             command = "RTX<t\(textModeTextField.stringValue)<c\(getColor(forMode: .text) + fadeComponent + (getTextAnimation(withDelay: true) ?? ""))/"
         case .keyTrace:
-            command = "CLR/"
             MenuViewController.keyTraceColor = getColor(forMode: .keyTrace)
             MenuViewController.keylogger.start()
+            command = "CLR/"
         case .clock:
-            let date = Date()
-            let calendar = Calendar.current
-            let hour = calendar.component(.hour, from: date)
-            let minute = calendar.component(.minute, from: date)
-            let second = calendar.component(.second, from: date)
-            let day = calendar.component(.day, from: date)
-            let month = calendar.component(.month, from: date)
-            let year = calendar.component(.year, from: date)
-            command = "CLK<t\(hour),\(minute),\(second),\(day),\(month),\(year)/"
+            routineTimer = Timer.scheduledTimer(
+                timeInterval: 30.0,
+                target: self,
+                selector: #selector(self.performRoutine), userInfo: nil, repeats: true)
+            routine = [RoutineStep.Clock]
+            command = "CLK<t\(Calendar.current.currentTimeAsString())/"
         case .off:
             command = "CLR/"
         default:
@@ -386,36 +418,41 @@ class MenuViewController: NSViewController {
     }
     
     /// Check cycle for validity
-    /// - Returns: whether current routine is valid
+    /// - Returns: Whether current routine cycle is valid
     func cycleValid() -> Bool {
-        for i in textCycleRoutine {
-            if i.text == "" { return false }
+        for i in routine {
+            switch i {
+            case .Clock: break
+            case .Text(let textStep):
+                if textStep.text == "" { return false }
+            }
         }
         return true
     }
     
     /// Insert current text cell parameters to routine array
-    func insertToTextCycleRoutine(inserting: Bool = false, clearing: Bool = false) {
+    func insertTextToCycleRoutine(inserting: Bool = false, clearing: Bool = false) {
+        if routine == [RoutineStep.Clock] { routine = []; currentRoutineIndex = 0 }
         var animationOut: (String, Int)? = nil
         if let animation = getTextAnimation(withDelay: false) {
             animationOut = (animation, textModeAnimationDelaySlider.integerValue)
         }
-        let element = TextCycleStep(text: textModeTextField.stringValue, color: getColor(forMode: .text), animation: animationOut, fade: (textModeAnimationFadeButton.isEnabled && textModeAnimationFadeButton.state == .on))
+        let element = RoutineStep.Text(RoutineStep.TextCycleStep(text: textModeTextField.stringValue, color: getColor(forMode: .text), animation: animationOut, fade: (textModeAnimationFadeButton.isEnabled && textModeAnimationFadeButton.state == .on)))
         if inserting {
-            textCycleRoutine.insert(element, at: textModeCycleStepsStepper.integerValue)
+            routine.insert(element, at: textModeCycleStepsStepper.integerValue)
         } else if clearing {
-            textCycleRoutine = [element]
+            routine = [element]
         } else {
-            textCycleRoutine[textModeCycleStepsStepper.integerValue] = element
+            routine[textModeCycleStepsStepper.integerValue] = element
         }
     }
     
     /// Apply current routine element's data to the UI
     func applyTextCycleRoutineElement() {
-        let element = textCycleRoutine[textModeCycleStepsStepper.integerValue]
-        textModeTextField.stringValue = element.text
+        guard case .Text(let textStep) = routine[textModeCycleStepsStepper.integerValue] else { return }
+        textModeTextField.stringValue = textStep.text
         var itemIndex = 0
-        if let s = element.color.0 {
+        if let s = textStep.color.0 {
             switch s {
             case "%RND%":
                 itemIndex = 1
@@ -427,11 +464,11 @@ class MenuViewController: NSViewController {
             }
         }
         textModeColorModePopUpButton.selectItem(at: itemIndex)
-        if let c = element.color.1 {
+        if let c = textStep.color.1 {
             textModeColorWell.color = c
         }
-        textModeAnimationFadeButton.state = element.fade ? .on : .off
-        if let a = element.animation {
+        textModeAnimationFadeButton.state = textStep.fade ? .on : .off
+        if let a = textStep.animation {
             textModeAnimationDelaySlider.integerValue = a.1
             updateTextModeAnimationDelayLabel()
             var segmentIndex = 0
@@ -692,6 +729,9 @@ class MenuViewController: NSViewController {
     
 }
 
+//*********************************************************************
+// MARK: EXTENSIONS
+//*********************************************************************
 extension MenuViewController {
     /// Receive a functional instance of the Menu View Controller
     /// - Returns: Functional instance of the Menu View Controller
@@ -710,5 +750,20 @@ extension NSColor {
     /// - Returns: Command-formatted string
     func asString() -> String {
         return "\(Int(self.redComponent * 255)),\(Int(self.greenComponent * 255)),\(Int(self.blueComponent * 255))"
+    }
+}
+
+extension Calendar {
+    /// Get command-formatted string representing current date and time
+    /// - Returns: Command-formatted string
+    func currentTimeAsString() -> String {
+        let date = Date()
+        let hour = self.component(.hour, from: date)
+        let minute = self.component(.minute, from: date)
+        let second = self.component(.second, from: date)
+        let day = self.component(.day, from: date)
+        let month = self.component(.month, from: date)
+        let year = self.component(.year, from: date)
+        return "\(hour),\(minute),\(second),\(day),\(month),\(year)"
     }
 }
