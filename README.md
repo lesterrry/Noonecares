@@ -1,6 +1,8 @@
 #  *No One Cares*
 Kinda cool 72x6 LED matrix no one cares about
 
+![IMG_3351](https://user-images.githubusercontent.com/45698501/127028860-167980b3-8dc7-4e64-a878-5271f97d418d.gif)
+
 ## Serial commands
 ### Syntax
 Command syntax is made as compact as possible
