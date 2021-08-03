@@ -133,7 +133,7 @@ Any instruction after `>i` gets ignored.
 - `139ef>120` – violet-colored pixel, drawn 120 times
 - `f165e>i` – orange-colored pixel, drawn until the end of matrix
 - `R>9` – red-colored pixel, drawn 9 times
-- `CPS<sR>72,f100e>72Y>72G>72B>72,139ef>72/` – draw LGBT flag *(change 72 to number of pixels in a row)*
+- `R>72,f100e>72Y>72G>72B>72,139ef>72/` – draw LGBT flag *(change 72 to number of pixels in a row)*
 
 >**NB:** Sets don't make sence when a `Default Color` instruction should be drawn less than 4 times, as their definition in this case takes 3 characters.
 
