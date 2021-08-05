@@ -133,7 +133,6 @@ Any instruction after `>i` gets ignored.
 - `139ef>120` – violet-colored pixel, drawn 120 times
 - `f165e>i` – orange-colored pixel, drawn until the end of matrix
 - `R>9` – red-colored pixel, drawn 9 times
-- `R>72,f100e>72Y>72G>72B>72,139ef>72/` – draw LGBT flag *(change 72 to number of pixels in a row)*
 
 >**NB:** Sets don't make sence when a `Default Color` instruction should be drawn less than 4 times, as their definition in this case takes 3 characters.
 
@@ -142,6 +141,7 @@ Any instruction after `>i` gets ignored.
 - `NNf165,e` – draw two black pixels, followed by an orange one
 - `R>100AAG>50` – draw 100 red pixels, skip two and draw 50 green pixels
 - `f192,203>100N>i` – draw 100 pink pixels, draw the remaining in black
+- `R>72,f100e>72Y>72G>72B>72,139ef>72/` – draw LGBT flag *(change 72 to number of pixels in a row)*
 
 ## Error codes list
 Error codes are returned by some functions if they fail to properly execute. Here's the reference
