@@ -71,7 +71,7 @@ Command arguments values represent different data types. This is the reference
 - `s`: *CCPS* – sequence to draw
 
 **Optional return**:
-- *Error* `ER011`/`ER012`/`ER021`
+- *Error* `ER011`/`ER012`/`ER021`/`ER051`/`ER052`
 
 #### *CLK* – display clock
 **Required arguments**:
