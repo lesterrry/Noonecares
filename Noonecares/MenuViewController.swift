@@ -170,16 +170,7 @@ class MenuViewController: NSViewController {
         setApplianceLabel(.notApplied)
         setMode(to: .CCPS)
     }
-    @IBOutlet weak var CCPSModeSavedFileComboBox: NSComboBox!
-    @IBAction func CCPSModeSavedFileComboBoxValueChanged(_ sender: Any) {
-        setApplianceLabel(.notApplied)
-    }
-    @IBAction func CCPSModeControlPanelButtonPressed(_ sender: Any) {
-        setMode(to: .CCPS, forceModeButton: true)
-        let controller = NSStoryboard(name: "Main", bundle: nil).instantiateController(withIdentifier: "MatrixWindowController") as! NSWindowController
-        controller.showWindow(self)
-    }
-    
+    @IBOutlet weak var CCPSModeSequenceTextField: NSTextField!
     @IBOutlet weak var timerModeButton: NSButton!
     @IBAction func timerModeButtonPressed(_ sender: Any) {
         setApplianceLabel(.notApplied)
@@ -398,6 +389,9 @@ class MenuViewController: NSViewController {
             MenuViewController.keyTraceColor = getColor(forMode: .keyTrace)
             MenuViewController.keylogger.start()
             command = "CLR/"
+        case .CCPS:
+            guard CCPSModeSequenceTextField.stringValue != "" else { setApplianceLabel(.corruptedParameters); return }
+            command = "CPS<s\(CCPSModeSequenceTextField.stringValue)/"
         case .clock:
             routineTimer = Timer.scheduledTimer(
                 timeInterval: 30.0,
@@ -650,7 +644,7 @@ class MenuViewController: NSViewController {
                 keyTraceModeColorModePopUpButton
             ],
             [
-                CCPSModeSavedFileComboBox
+                CCPSModeSequenceTextField
             ],
             [
                 timerModeTextField,
