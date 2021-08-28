@@ -7,6 +7,7 @@
 
 import Cocoa
 import ORSSerial
+import AVFoundation
 
 class MenuViewController: NSViewController {
     
@@ -260,6 +261,7 @@ class MenuViewController: NSViewController {
     // MARK: VARS & CONSTS
     //*********************************************************************
     private static var serialPort: ORSSerialPort!
+    private static var player = AVAudioPlayer()
     public static var connectionState = SystemProperties.ConnectionState.disconnected
     public static var keylogger = Keylogger()
     public static var keyTraceColor: String?
@@ -269,6 +271,7 @@ class MenuViewController: NSViewController {
     var routineTimer: Timer?
     var routine: [RoutineStep] = []
     var currentRoutineIndex = 0
+    var CCPSCustomPath: URL!
     
     //*********************************************************************
     // MARK: MAIN FUNCTIONS
@@ -287,6 +290,7 @@ class MenuViewController: NSViewController {
         NSApplication.shared.activate(ignoringOtherApps: true)
         insertTextToCycleRoutine(inserting: true)
         if MenuViewController.connectionState != .connected { establishConnection() }
+        CCPSCustomPath = FileManager().homeDirectoryForCurrentUser.appendingPathComponent("Documents/Noonecares")
     }
     
     /// Send a command to the device via serial port
@@ -391,7 +395,24 @@ class MenuViewController: NSViewController {
             command = "CLR/"
         case .CCPS:
             guard CCPSModeSequenceTextField.stringValue != "" else { setApplianceLabel(.corruptedParameters); return }
-            command = "CPS<s\(CCPSModeSequenceTextField.stringValue)/"
+            let b = CCPSCustomPath.appendingPathComponent(CCPSModeSequenceTextField.stringValue + ".ccps")
+            let fm = FileManager()
+            if fm.fileExists(atPath: b.path) {
+                do {
+                    command = "CPS<s\(try String(contentsOf: b))/"
+                } catch {
+                    setApplianceLabel(.corruptedParameters)
+                    return
+                }
+                let a = CCPSCustomPath.appendingPathComponent(CCPSModeSequenceTextField.stringValue + ".mp3")
+                if fm.fileExists(atPath: a.path) {
+                    MenuViewController.player = try! AVAudioPlayer(contentsOf: a)
+                    MenuViewController.player.volume = 1.0
+                    MenuViewController.player.play()
+                }
+            } else {
+                command = "CPS<s\(CCPSModeSequenceTextField.stringValue)/"
+            }
         case .clock:
             routineTimer = Timer.scheduledTimer(
                 timeInterval: 30.0,
@@ -546,6 +567,7 @@ class MenuViewController: NSViewController {
     ///   - to: Mode to switch to
     ///   - forceModeButton: Whether to explicitly order the corresponding mode button to set its state to 'on'
     func setMode(to: SystemProperties.Mode, forceModeButton: Bool = false) {
+        MenuViewController.player.stop()
         systemTargetMode = to
         setModeButtonsState(to: .off, except: to.rawValue, force: forceModeButton)
         setCellsEnabledState(to: false, except: to.rawValue, revert: true)
