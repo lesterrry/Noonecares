@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE dictionary SYSTEM "file://localhost/System/Library/DTDs/sdef.dtd">
+
+<dictionary title="Noonecares Scripting Terminology">
+    
+    <suite name="Scriptable Noonecares Suite" code="NoSu" description="Scriptable Noonecares suite.">
+        
+        <command name="send" code="NoOnSend">
+            <cocoa class="Noonecares.ScriptableApplicationCommand"/>
+            <access-group identifier="*"/>
+            <parameter code="NoCm" name="command" description="Command to send" type="text">
+                <cocoa key="commandFlag"/>
+            </parameter>
+            <result type="text" description="ACK"/>
+        </command>
+        
+    </suite>
+    
+</dictionary>

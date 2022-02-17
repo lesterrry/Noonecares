@@ -9,7 +9,7 @@ import Cocoa
 import ORSSerial
 import AVFoundation
 
-class MenuViewController: NSViewController {
+class MenuViewController: NSViewController, ORSSerialPortDelegate {
     
     //*********************************************************************
     // MARK: STRUCTURES
@@ -58,7 +58,7 @@ class MenuViewController: NSViewController {
     @IBOutlet weak var connectionStatusLabel: NSTextField!
     @IBOutlet weak var connectionStatusRefreshButton: NSButton!
     @IBAction func connectionStatusRefreshButtonClicked(_ sender: Any) {
-        establishConnection()
+        maintainConnection()
     }
     @IBOutlet weak var applianceStatusLabel: NSTextField!
     
@@ -105,6 +105,7 @@ class MenuViewController: NSViewController {
     @IBOutlet weak var textModeCycleSwitch: NSSwitch!
     @IBAction func textModeCycleSwitchSwitched(_ sender: Any) {
         suitTextCellCycleElementsEnabledState()
+        //insertTextToCycleRoutine(inserting: true)
     }
     @IBOutlet weak var textModeCycleProgressIndicator: NSProgressIndicator!
     @IBOutlet weak var textModeCycleStepsLabel: NSTextField!
@@ -260,7 +261,7 @@ class MenuViewController: NSViewController {
     //*********************************************************************
     // MARK: VARS & CONSTS
     //*********************************************************************
-    private static var serialPort: ORSSerialPort!
+    @objc private static var serialPort: ORSSerialPort!
     private static var player = AVAudioPlayer()
     public static var connectionState = SystemProperties.ConnectionState.disconnected
     public static var keylogger = Keylogger()
@@ -284,13 +285,25 @@ class MenuViewController: NSViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        CCPSCustomPath = FileManager().homeDirectoryForCurrentUser.appendingPathComponent("Documents/Noonecares")
+        insertTextToCycleRoutine(inserting: true)
     }
     
     override func viewDidAppear() {
         NSApplication.shared.activate(ignoringOtherApps: true)
-        insertTextToCycleRoutine(inserting: true)
-        if MenuViewController.connectionState != .connected { establishConnection() }
-        CCPSCustomPath = FileManager().homeDirectoryForCurrentUser.appendingPathComponent("Documents/Noonecares")
+        //insertTextToCycleRoutine(inserting: true)
+        maintainConnection()
+        print(routine)
+    }
+    
+//    TODO: Receive errors from device
+//    func serialPort(_ serialPort: ORSSerialPort, didReceive data: Data) {
+//        let string = String(data: data, encoding: .utf8)
+//        print("Got \(string) from the serial port!")
+//    }
+    
+    func serialPortWasRemovedFromSystem(_ serialPort: ORSSerialPort) {
+        setConnectionState(to: .disconnected)
     }
     
     /// Send a command to the device via serial port
@@ -327,13 +340,20 @@ class MenuViewController: NSViewController {
     }
     
     /// Connect to the device and set the state
-    func establishConnection() {
+    func maintainConnection() {
+        if MenuViewController.connectionState == .connected {
+            if !MenuViewController.serialPort.isOpen {
+                setConnectionState(to: .disconnected)
+            }
+            return
+        }
         guard let s = ORSSerialPort(path: NSUserDefaultsController.shared.defaults.string(forKey: "port") ?? "") else {
             setConnectionState(to: .disconnected)
             return
         }
+        s.delegate = self
+        s.baudRate = 115200
         MenuViewController.serialPort = s
-        MenuViewController.serialPort.baudRate = 115200
         setConnectionState(to: .connected)
         MenuViewController.serialPort.open()
     }
@@ -446,6 +466,9 @@ class MenuViewController: NSViewController {
     }
     
     /// Insert current text cell parameters to routine array
+    /// - Parameters:
+    ///   - inserting: Whether to insert item in place
+    ///   - clearing: Whether to clean the routine pre-add
     func insertTextToCycleRoutine(inserting: Bool = false, clearing: Bool = false) {
         if routine == [RoutineStep.Clock] { routine = []; currentRoutineIndex = 0 }
         var animationOut: (String, Int)? = nil
@@ -560,6 +583,22 @@ class MenuViewController: NSViewController {
             let color = forMode == .text ? textModeColorWell.color : keyTraceModeColorWell.color
             return (nil, color)
         }
+    }
+    
+    func getClippedCCPS(from: String) -> [String] {
+        let skipMarkers = ["N"]
+        var r = [""]
+        var index = 0
+        var counter = 0
+        for i in from {
+            counter += 1
+            if counter >= 32 {
+                counter = 0
+                index += 1
+            }
+            r[index].append(i)
+        }
+        return r
     }
     
     /// Set system mode
