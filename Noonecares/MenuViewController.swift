@@ -274,6 +274,18 @@ class MenuViewController: NSViewController, ORSSerialPortDelegate {
     var currentRoutineIndex = 0
     var CCPSCustomPath: URL!
     
+    var cycleValid: Bool {
+        get {
+            for i in routine {
+                switch i {
+                case .Clock: break
+                case .Text(let textStep):
+                    if textStep.text == "" { return false }
+                }
+            }
+            return true
+        }
+    }
     //*********************************************************************
     // MARK: MAIN FUNCTIONS
     //*********************************************************************
@@ -291,9 +303,7 @@ class MenuViewController: NSViewController, ORSSerialPortDelegate {
     
     override func viewDidAppear() {
         NSApplication.shared.activate(ignoringOtherApps: true)
-        //insertTextToCycleRoutine(inserting: true)
         maintainConnection()
-        print(routine)
     }
     
 //    TODO: Receive errors from device
@@ -358,7 +368,7 @@ class MenuViewController: NSViewController, ORSSerialPortDelegate {
         MenuViewController.serialPort.open()
     }
     
-    /// Creare from cycle step and send a command to the matix
+    /// Create from cycle step and send a command to the matix
     /// - Parameter from: Cycle step to use
     func composeAndExecuteCommand(from: RoutineStep) {
         let command: String!
@@ -388,17 +398,13 @@ class MenuViewController: NSViewController, ORSSerialPortDelegate {
     
     /// Create from UI and send a command to the matix
     func composeAndExecuteCommand() {
-        if MenuViewController.systemCurrentMode == .keyTrace && MenuViewController.systemCurrentMode != systemTargetMode {
-            MenuViewController.keylogger.stop()
-        }
-        textModeCycleProgressIndicator.stopAnimation(nil)
-        routineTimer?.invalidate()
+        stopAllAction()
         let command: String!
         switch systemTargetMode {
         case .text:
             guard textModeTextField.stringValue != "" else { setApplianceLabel(.corruptedParameters); return }
             if textModeCycleSwitch.state == .on && textModeCycleSwitch.isEnabled {
-                guard cycleValid() else { setApplianceLabel(.corruptedParameters); return }
+                guard cycleValid else { setApplianceLabel(.corruptedParameters); return }
                 insertTextToCycleRoutine()
                 routineTimer = Timer.scheduledTimer(
                     timeInterval: Double(textModeCycleDelayStepper.integerValue),
@@ -452,17 +458,13 @@ class MenuViewController: NSViewController, ORSSerialPortDelegate {
         MenuViewController.systemCurrentMode = systemTargetMode
     }
     
-    /// Check cycle for validity
-    /// - Returns: Whether current routine cycle is valid
-    func cycleValid() -> Bool {
-        for i in routine {
-            switch i {
-            case .Clock: break
-            case .Text(let textStep):
-                if textStep.text == "" { return false }
-            }
+    /// Stops all recurring actions such as routine
+    func stopAllAction() {
+        if MenuViewController.systemCurrentMode == .keyTrace && systemTargetMode != .keyTrace {
+            MenuViewController.keylogger.stop()
         }
-        return true
+        textModeCycleProgressIndicator?.stopAnimation(nil)
+        routineTimer?.invalidate()
     }
     
     /// Insert current text cell parameters to routine array

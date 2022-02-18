@@ -10,7 +10,7 @@ import Cocoa
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
     let statusItem = NSStatusBar.system.statusItem(withLength:NSStatusItem.squareLength)
-    let popover = NSPopover()
+    public static let popover = NSPopover()
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         // Insert code here to initialize your application
@@ -19,11 +19,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             button.image = NSImage(named:NSImage.Name("noonelogo"))
             button.action = #selector(togglePopover(_:))
         }
-        popover.contentViewController = MenuViewController.freshController()
+        AppDelegate.popover.contentViewController = MenuViewController.freshController()
     }
     
     @objc func togglePopover(_ sender: Any?) {
-      if popover.isShown {
+        if AppDelegate.popover.isShown {
         closePopover(sender: sender)
       } else {
         showPopover(sender: sender)
@@ -32,11 +32,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     func showPopover(sender: Any?) {
       if let button = statusItem.button {
-        popover.show(relativeTo: button.bounds, of: button, preferredEdge: NSRectEdge.minY)
+        AppDelegate.popover.show(relativeTo: button.bounds, of: button, preferredEdge: NSRectEdge.minY)
       }
     }
 
     func closePopover(sender: Any?) {
-      popover.performClose(sender)
+        AppDelegate.popover.performClose(sender)
     }
 }

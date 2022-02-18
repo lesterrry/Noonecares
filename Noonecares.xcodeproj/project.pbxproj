@@ -125,6 +125,7 @@
 				ECCDB0686F1CC04CCBD16957 /* [CP] Check Pods Manifest.lock */,
 				A8CE0F8F26A3181C003147EE /* Sources */,
 				A8CE0F9026A3181C003147EE /* Frameworks */,
+				A80B2FFF27BFD35B0097A6BD /* ShellScript */,
 				A8CE0F9126A3181C003147EE /* Resources */,
 				3C90D29A9ABF7EF22A7C708D /* [CP] Embed Pods Frameworks */,
 			);
@@ -200,6 +201,23 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Noonecares/Pods-Noonecares-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
+		};
+		A80B2FFF27BFD35B0097A6BD /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Script to replace APP_VERSION_LABEL's text to current app version\nsourceFilePath=\"$PROJECT_DIR/$PROJECT_NAME/Base.lproj/Main.storyboard\"\nversionNumber=\"$MARKETING_VERSION\"\nbuildNumber=\"$CURRENT_PROJECT_VERSION\"\n\nsed -i \"\" -e \"/userLabel=\\\"APP_VERSION_LABEL\\\"/s/title=\\\"[^\\\"]*\\\"/title=\\\"$versionNumber($buildNumber)\\\"/\" \"$sourceFilePath\"\n";
 		};
 		ECCDB0686F1CC04CCBD16957 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
