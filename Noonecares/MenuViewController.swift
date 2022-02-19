@@ -299,6 +299,12 @@ class MenuViewController: NSViewController, ORSSerialPortDelegate {
         super.viewDidLoad()
         CCPSCustomPath = FileManager().homeDirectoryForCurrentUser.appendingPathComponent("Documents/Noonecares")
         insertTextToCycleRoutine(inserting: true)
+        try! print(CCPS.Sequence(from: "255,108,255").asString())
+        try! print(CCPS.Sequence(from: "WWRBB").asString())
+        try! print(CCPS.Sequence(from: "NNf165,e").asString())
+        try! print(CCPS.Sequence(from: "R>100AAG>50").asString())
+        try! print(CCPS.Sequence(from: "f192,203>100N>i").asString())
+        try! print(CCPS.Sequence(from: "R>72,f100e>72Y>72G>72B>72,139ef>72").asString())
     }
     
     override func viewDidAppear() {
@@ -585,22 +591,6 @@ class MenuViewController: NSViewController, ORSSerialPortDelegate {
             let color = forMode == .text ? textModeColorWell.color : keyTraceModeColorWell.color
             return (nil, color)
         }
-    }
-    
-    func getClippedCCPS(from: String) -> [String] {
-        let skipMarkers = ["N"]
-        var r = [""]
-        var index = 0
-        var counter = 0
-        for i in from {
-            counter += 1
-            if counter >= 32 {
-                counter = 0
-                index += 1
-            }
-            r[index].append(i)
-        }
-        return r
     }
     
     /// Set system mode

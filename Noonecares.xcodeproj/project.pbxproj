@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		A80B2FF927BEC2B80097A6BD /* Scriptable.sdef in Resources */ = {isa = PBXBuildFile; fileRef = A80B2FF827BEC2B80097A6BD /* Scriptable.sdef */; };
 		A80B2FFC27BEC4320097A6BD /* ScriptableCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80B2FFB27BEC4320097A6BD /* ScriptableCommand.swift */; };
+		A80B300827C02FB50097A6BD /* CCPS.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80B300727C02FB50097A6BD /* CCPS.swift */; };
 		A8CE0F9726A3181C003147EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8CE0F9626A3181C003147EE /* AppDelegate.swift */; };
 		A8CE0F9B26A31820003147EE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A8CE0F9A26A31820003147EE /* Assets.xcassets */; };
 		A8CE0F9E26A31820003147EE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A8CE0F9C26A31820003147EE /* Main.storyboard */; };
@@ -27,6 +28,7 @@
 		7BF76229637BF4D56DA0D988 /* Pods-Noonecares.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Noonecares.release.xcconfig"; path = "Target Support Files/Pods-Noonecares/Pods-Noonecares.release.xcconfig"; sourceTree = "<group>"; };
 		A80B2FF827BEC2B80097A6BD /* Scriptable.sdef */ = {isa = PBXFileReference; lastKnownFileType = text; path = Scriptable.sdef; sourceTree = "<group>"; };
 		A80B2FFB27BEC4320097A6BD /* ScriptableCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScriptableCommand.swift; sourceTree = "<group>"; };
+		A80B300727C02FB50097A6BD /* CCPS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CCPS.swift; sourceTree = "<group>"; };
 		A8CE0F9326A3181C003147EE /* Noonecares.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Noonecares.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A8CE0F9626A3181C003147EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A8CE0F9A26A31820003147EE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -103,6 +105,7 @@
 				A8CE0F9C26A31820003147EE /* Main.storyboard */,
 				A8DDCB2126AA020B00BB6158 /* SetupViewController.swift */,
 				A8CE0FA926A31EDA003147EE /* MenuViewController.swift */,
+				A80B300727C02FB50097A6BD /* CCPS.swift */,
 				A80B2FF827BEC2B80097A6BD /* Scriptable.sdef */,
 				A8DDCB2D26AB6DF200BB6158 /* Keylogger.swift */,
 				FCAE887826A75AB2008DD45E /* Properties&Axioms.swift */,
@@ -256,6 +259,7 @@
 				A8DDCB2226AA020B00BB6158 /* SetupViewController.swift in Sources */,
 				A8CE0F9726A3181C003147EE /* AppDelegate.swift in Sources */,
 				A8DDCB2E26AB6DF200BB6158 /* Keylogger.swift in Sources */,
+				A80B300827C02FB50097A6BD /* CCPS.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
