@@ -199,6 +199,24 @@ public class CCPS {
                     }
                 }
             }
+            var count: Int {  // FIXME: This property is an absolute nightmare
+                switch self {
+                case .DefaultColor:
+                    return 1
+                case let .CustomColor(r, g, b):
+                    var n = 3
+                    if case .Num(_) = r { n += 3 }
+                    if case .Num(_) = g { n += 3 }
+                    if case .Num(_) = b { n += 3 }
+                    return n
+                case let .Set(ins, rep):
+                    if case .Num(_) = rep {
+                        return ins.count + 3
+                    } else {
+                        return ins.count + 1
+                    }
+                }
+            }
         }
         
         var instructions: [Instruction]
@@ -213,7 +231,7 @@ public class CCPS {
             var a = try string.parse()
             if !disableOptimize { try a.optimize() }
             initialString = string
-            if wipeAfter { a.append(.Set(.DefaultColor(.Alpha), .TillTheEnd)) }
+            if wipeAfter { a.append(.Set(.DefaultColor(.None), .TillTheEnd)) }
             instructions = a
         }
         /// Initialize a Sequence manually
@@ -229,18 +247,18 @@ public class CCPS {
             } else {
                 instructions = array
             }
-            if wipeAfter { instructions.append(.Set(.DefaultColor(.Alpha), .TillTheEnd)) }
+            if wipeAfter { instructions.append(.Set(.DefaultColor(.None), .TillTheEnd)) }
         }
-        /// Initialize a Sequence from image
+        /// Initialize a Sequence from raw json-formatted pixel data
         /// - Parameters:
-        ///   - image: Image to use
+        ///   - data: Data to use
         /// - Parameter wipeAfter: Add clearing set to the end of the Sequence
         /// - Parameter disableOptimize: Do not optimize the Sequence
         /// - Throws: If CCPS is corrupt
-        init(from image: NSImage, wipeAfter: Bool = true, disableOptimize: Bool = false) throws {
-            var a = try Foundation.construct(image)
-            //if !disableOptimize { try a.optimize() }
-            //if wipeAfter { a.append(.Set(.DefaultColor(.Alpha), .TillTheEnd)) }
+        init(from data: [[[Int]]], wipeAfter: Bool = false, disableOptimize: Bool = false) throws {
+            var a = Foundation.construct(data)
+            if !disableOptimize { try a.optimize() }
+            if wipeAfter { a.append(.Set(.DefaultColor(.None), .TillTheEnd)) }
             instructions = a
         }
         /// Return string representation of the Sequence
@@ -249,7 +267,7 @@ public class CCPS {
         public func asString() throws -> String {
             return try CCPS.Foundation.render(self.instructions)
         }
-        /// Return string representation of the Sequence
+        /// Return string representation of the Sequence, safely divided into blocks
         /// - Throws: If CCPS is corrupt
         /// - Returns: Sequence string
         public func asString(blockSize: Int = 16) throws -> [String] {
@@ -276,6 +294,7 @@ public class CCPS {
         
         enum OptimizationError: Error {
             case UnknownInSequence
+            case EmptySequence
         }
         
         enum ConstructionError: Error {
@@ -414,7 +433,7 @@ public class CCPS {
         /// - Returns: Sequence string
         static func render(_ from: [Sequence.Instruction]) throws -> String {
             var ret = ""
-            for i in 0...from.count {
+            for i in 0...from.count - 1 {
                 ret.append(try renderInstruction(from[i]))
                 if from[i].stringRepresentationEndsWithANumber,
                    let x = from[safeIndex: i + 1],
@@ -432,18 +451,22 @@ public class CCPS {
             var ret = [""]
             var index = 0
             var blockPixelSize = 0
+            var usedBlockSize = 0
             for i in 0...from.count - 1 {
-                if i != 0 && i % blockSize == 0 {
+                if usedBlockSize > blockSize {
                     index += 1
                     ret.append("A>\(blockPixelSize)")
+                    if from[i].stringRepresentationStartsWithANumber { ret[index].append(",") }
+                    usedBlockSize = 0
                 }
                 if let x = from[i].countInPixels { blockPixelSize += x }
                 ret[index].append(try renderInstruction(from[i]))
-                if (i + 1) % blockSize != 0,
+                if usedBlockSize + from[i].count <= blockSize,
                    from[i].stringRepresentationEndsWithANumber,
                    let x = from[safeIndex: i + 1],
                    x.stringRepresentationStartsWithANumber
                 { ret[index].append(",") }
+                usedBlockSize += from[i].count
             }
             return ret
         }
@@ -452,35 +475,36 @@ public class CCPS {
         /// - Throws: If CCPS is corrupt
         /// - Returns: Optimized set of Instructions
         static func optimize(_ what: [Sequence.Instruction]) throws -> [Sequence.Instruction] {
+            // TODO: Correct almost-default pixels (254, 1, 1 -> R)
             // TODO: Separate sets if repeated less then 4 times
-            // TODO: Pack repeating instructions into sets
             // TODO: Remove everything after infinite set
             @discardableResult
-            func optimizeInstruction(_ instruction: inout Sequence.Instruction) throws -> Bool {
+            func optimizeInstruction(_ instruction: inout Sequence.Instruction) throws -> Sequence.Instruction {
                 switch instruction {
                 case .DefaultColor:
-                    return true
+                    return instruction
                 case var .CustomColor(r, g, b):
                     switch (r, g, b) {
                     case let (x, y, z) where x == .Unknown || y == .Unknown || z == .Unknown:
                         throw OptimizationError.UnknownInSequence
                     case (.Num(255), .Num(255), .Num(255)):
-                        instruction = .DefaultColor(.White); return true
+                        instruction = .DefaultColor(.White); return instruction
                     case (.Num(0), .Num(0), .Num(0)):
-                        instruction = .DefaultColor(.None); return true
+                        instruction = .DefaultColor(.None); return instruction
                     case (.Num(255), .Num(0), .Num(0)):
-                        instruction = .DefaultColor(.Red); return true
+                        instruction = .DefaultColor(.Red); return instruction
                     case (.Num(0), .Num(255), .Num(0)):
-                        instruction = .DefaultColor(.Green); return true
+                        instruction = .DefaultColor(.Green); return instruction
                     case (.Num(0), .Num(0), .Num(255)):
-                        instruction = .DefaultColor(.Blue); return true
+                        instruction = .DefaultColor(.Blue); return instruction
                     case (.Num(0), .Num(255), .Num(255)):
-                        instruction = .DefaultColor(.Cyan); return true
+                        instruction = .DefaultColor(.Cyan); return instruction
                     case (.Num(255), .Num(0), .Num(255)):
-                        instruction = .DefaultColor(.Magenta); return true
+                        instruction = .DefaultColor(.Magenta); return instruction
                     case (.Num(255), .Num(255), .Num(0)):
-                        instruction = .DefaultColor(.Yellow); return true
+                        instruction = .DefaultColor(.Yellow); return instruction
                     case let unknown:
+                        break  // FIXME: This part of code is made unreachable bc the device blows up if such commands are sent
                         if unknown.0 == .Num(255) {
                             r = .Full
                         }
@@ -502,44 +526,65 @@ public class CCPS {
                         instruction = .CustomColor(r, g, b)
                     }
                 case let .Set(_, rep):
-                    if case CCPS.Sequence.SetRepeat.Unknown = rep {
-                        throw OptimizationError.UnknownInSequence
-                    }
+                    if case CCPS.Sequence.SetRepeat.Unknown = rep { throw OptimizationError.UnknownInSequence }
                 }
-                return false
+                return instruction
             }
+            guard what.count > 0 else { throw OptimizationError.EmptySequence }
             var what = what
             var lastInstruction: Sequence.Instruction? = nil
             var instructionRepeats = 0
             var needToPackInSet = false
-            for i in 0...what.count - 1 {
-                try optimizeInstruction(&what[i])
-                if lastInstruction == what[i] {
-                    instructionRepeats += 1
+            var ri = 0
+            var rlen = what.count
+            while true {
+                if ri >= rlen {
+                    if needToPackInSet {
+                        what.removeSubrange(ri - instructionRepeats...ri - 1)
+                        ri -= instructionRepeats
+                        what.insert(Sequence.Instruction.Set(lastInstruction!, .Num(instructionRepeats)), at: ri)
+                    }
+                    break
+                }
+                try optimizeInstruction(&what[ri])
+                if lastInstruction == what[ri] {
+                    if instructionRepeats == 0 { instructionRepeats = 2 } else { instructionRepeats += 1 }
                 } else {
                     if needToPackInSet {
-                        what.removeSubrange(i - instructionRepeats...what.count)
-                        what.append(Sequence.Instruction.Set(lastInstruction!, .Num(instructionRepeats)))
+                        what.removeSubrange(ri - instructionRepeats...ri - 1)
+                        ri -= instructionRepeats
+                        rlen -= instructionRepeats - 1
+                        what.insert(Sequence.Instruction.Set(lastInstruction!, .Num(instructionRepeats)), at: ri)
+                        needToPackInSet = false
                     }
-                    needToPackInSet = false
                     instructionRepeats = 0
                 }
-                if instructionRepeats >= 4 { needToPackInSet = true }
-                lastInstruction = what[i]
+                if instructionRepeats >= 4 {
+                    needToPackInSet = true
+                }
+                lastInstruction = what[ri]
+                ri += 1
             }
             return what
         }
-        static func construct(_ from: NSImage) throws -> [Sequence.Instruction] {
-            let imageData = from.imageData()
-            dump(imageData)
-            return []
-            //            guard let a = DeviceProperties.matrixSize else { throw ConstructionError.MatrixSizeNotSet }
-            //            guard imageData.1 != a.x || imageData.2 != a.y else { throw ConstructionError.ImageSizeNotSupported }
-            //            var ret: [Sequence.Instruction] = []
-            //            for i in imageData.0 {
-            //                ret.append(.CustomColor(.Num(i.), <#T##CCPS.Sequence.CustomColorConstant#>, <#T##CCPS.Sequence.CustomColorConstant#>))
-            //            }
-            //            return ret
+        /// Create set of Instructions from image pixel data array
+        /// - Parameter from: Image pixel data array to use
+        /// - Returns: Created set of instructions
+        static func construct(_ from: [[[Int]]]) -> [Sequence.Instruction] {
+            // TODO: Check if file size is correct
+            //guard let a = DeviceProperties.matrixSize else { throw ConstructionError.MatrixSizeNotSet }
+            //guard imageData.1 != a.x || imageData.2 != a.y else { throw ConstructionError.ImageSizeNotSupported }
+            var ret: [Sequence.Instruction] = []
+            for i in from {
+                for j in i {
+                    if j[safeIndex: 3] == 0 {
+                        ret.append(.DefaultColor(.Alpha))
+                    } else {
+                        ret.append(.CustomColor(.Num(j[0]), .Num(j[1]), .Num(j[2])))
+                    }
+                }
+            }
+            return ret
         }
         
     }

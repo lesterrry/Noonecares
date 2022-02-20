@@ -300,12 +300,9 @@ class MenuViewController: NSViewController, ORSSerialPortDelegate {
         CCPSCustomPath = FileManager().homeDirectoryForCurrentUser.appendingPathComponent("Documents/Noonecares")
         if let a = NSUserDefaultsController.shared.defaults.string(forKey: "matrix_size") {
             let components = a.components(separatedBy: "x")
-            if let x = Int(components[0]), let y = Int(components[1]) {
-                DeviceProperties.matrixSize = (x, y)
-            }
+            if let x = Int(components[0]), let y = Int(components[1]) { DeviceProperties.matrixSize = (x, y) }
         }
         insertTextToCycleRoutine(inserting: true)
-        try! print(CCPS.Sequence(from: "N>60R>5N>12R>4W>4N>118W>4R>4N>10R>8N>118R>7N>12RRN>3RR").asString(blockSize: 8))
     }
     
     override func viewDidAppear() {
@@ -331,6 +328,24 @@ class MenuViewController: NSViewController, ORSSerialPortDelegate {
             return
         }
         MenuViewController.serialPort.send(d)
+    }
+    
+    public func sendCCPS(_ sequence: CCPS.Sequence) {
+        do {
+            let sets: [String] = try sequence.asString()
+            for i in sets {
+                let command = "CPS<s\(i)/"
+                guard let d = command.data(using: .utf8) else {
+                    SystemMethods.log("No data to send")
+                    return
+                }
+                MenuViewController.serialPort.send(d)
+                Thread.sleep(forTimeInterval: .init(0.05))
+            }
+        } catch {
+            SystemMethods.log(error)
+            setApplianceLabel(.corruptedParameters)
+        }
     }
     
     /// Send key to the device
@@ -431,7 +446,7 @@ class MenuViewController: NSViewController, ORSSerialPortDelegate {
             let fm = FileManager()
             let a = CCPSCustomPath.appendingPathComponent(CCPSModeSequenceTextField.stringValue + ".mp3")
             let b = CCPSCustomPath.appendingPathComponent(CCPSModeSequenceTextField.stringValue + ".ccps")
-            let c = CCPSCustomPath.appendingPathComponent(CCPSModeSequenceTextField.stringValue + ".png")
+            let c = CCPSCustomPath.appendingPathComponent(CCPSModeSequenceTextField.stringValue + ".json")
             if fm.fileExists(atPath: b.path) {
                 do {
                     command = "CPS<s\(try String(contentsOf: b))/"
@@ -440,10 +455,26 @@ class MenuViewController: NSViewController, ORSSerialPortDelegate {
                     return
                 }
             } else if fm.fileExists(atPath: c.path) {
-                if let image = NSImage(contentsOf: c) {
-                    let seq = try! CCPS.Sequence(from: image)
+                let seq: CCPS.Sequence!
+                do {
+                    let arrays = try JSONSerialization.jsonObject(
+                        with: Data(contentsOf: URL(fileURLWithPath: c.path)),
+                                options: JSONSerialization.ReadingOptions()
+                        ) as? [[[[Int]]]]
+                    guard let a = arrays else { setApplianceLabel(.corruptedParameters); return }
+                    if a.count == 1 {
+                        seq = try! CCPS.Sequence(from: a[0])
+                    } else {
+                        return
+                    }
+                    sendCCPS(seq)
+                    setApplianceLabel(.applied)
+                    MenuViewController.systemCurrentMode = systemTargetMode
+                } catch {
+                    SystemMethods.log(error)
+                    setApplianceLabel(.corruptedParameters)
                 }
-                command = "CLR/"
+                return
             } else {
                 command = "CPS<s\(CCPSModeSequenceTextField.stringValue)/"
             }

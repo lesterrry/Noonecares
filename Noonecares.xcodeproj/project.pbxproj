@@ -10,6 +10,7 @@
 		A80B2FF927BEC2B80097A6BD /* Scriptable.sdef in Resources */ = {isa = PBXBuildFile; fileRef = A80B2FF827BEC2B80097A6BD /* Scriptable.sdef */; };
 		A80B2FFC27BEC4320097A6BD /* ScriptableCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80B2FFB27BEC4320097A6BD /* ScriptableCommand.swift */; };
 		A80B300827C02FB50097A6BD /* CCPS.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80B300727C02FB50097A6BD /* CCPS.swift */; };
+		A80B300C27C2B83B0097A6BD /* makeCCPSjson.py in Resources */ = {isa = PBXBuildFile; fileRef = A80B300B27C2B83A0097A6BD /* makeCCPSjson.py */; };
 		A8CE0F9726A3181C003147EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8CE0F9626A3181C003147EE /* AppDelegate.swift */; };
 		A8CE0F9B26A31820003147EE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A8CE0F9A26A31820003147EE /* Assets.xcassets */; };
 		A8CE0F9E26A31820003147EE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A8CE0F9C26A31820003147EE /* Main.storyboard */; };
@@ -29,6 +30,7 @@
 		A80B2FF827BEC2B80097A6BD /* Scriptable.sdef */ = {isa = PBXFileReference; lastKnownFileType = text; path = Scriptable.sdef; sourceTree = "<group>"; };
 		A80B2FFB27BEC4320097A6BD /* ScriptableCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScriptableCommand.swift; sourceTree = "<group>"; };
 		A80B300727C02FB50097A6BD /* CCPS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CCPS.swift; sourceTree = "<group>"; };
+		A80B300B27C2B83A0097A6BD /* makeCCPSjson.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = makeCCPSjson.py; sourceTree = "<group>"; };
 		A8CE0F9326A3181C003147EE /* Noonecares.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Noonecares.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A8CE0F9626A3181C003147EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A8CE0F9A26A31820003147EE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -80,6 +82,7 @@
 			isa = PBXGroup;
 			children = (
 				A8CE0FA726A3185A003147EE /* noonecares.ino */,
+				A80B300B27C2B83A0097A6BD /* makeCCPSjson.py */,
 				FCDA502826A98D1200EA7D3F /* README.md */,
 				A8CE0F9526A3181C003147EE /* Noonecares */,
 				A8CE0F9426A3181C003147EE /* Products */,
@@ -180,6 +183,7 @@
 			files = (
 				A80B2FF927BEC2B80097A6BD /* Scriptable.sdef in Resources */,
 				A8CE0F9B26A31820003147EE /* Assets.xcassets in Resources */,
+				A80B300C27C2B83B0097A6BD /* makeCCPSjson.py in Resources */,
 				A8CE0F9E26A31820003147EE /* Main.storyboard in Resources */,
 				A8CE0FB026A3297C003147EE /* MatrixCollectionViewItem.xib in Resources */,
 			);
@@ -402,7 +406,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = 9Q6UB3UBW7;
 				ENABLE_HARDENED_RUNTIME = NO;
 				INFOPLIST_FILE = Noonecares/Info.plist;
@@ -428,7 +432,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = 9Q6UB3UBW7;
 				ENABLE_HARDENED_RUNTIME = NO;
 				INFOPLIST_FILE = Noonecares/Info.plist;
