@@ -298,13 +298,14 @@ class MenuViewController: NSViewController, ORSSerialPortDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         CCPSCustomPath = FileManager().homeDirectoryForCurrentUser.appendingPathComponent("Documents/Noonecares")
+        if let a = NSUserDefaultsController.shared.defaults.string(forKey: "matrix_size") {
+            let components = a.components(separatedBy: "x")
+            if let x = Int(components[0]), let y = Int(components[1]) {
+                DeviceProperties.matrixSize = (x, y)
+            }
+        }
         insertTextToCycleRoutine(inserting: true)
-        try! print(CCPS.Sequence(from: "255,108,255").asString())
-        try! print(CCPS.Sequence(from: "WWRBB").asString())
-        try! print(CCPS.Sequence(from: "NNf165,e").asString())
-        try! print(CCPS.Sequence(from: "R>100AAG>50").asString())
-        try! print(CCPS.Sequence(from: "f192,203>100N>i").asString())
-        try! print(CCPS.Sequence(from: "R>72,f100e>72Y>72G>72B>72,139ef>72").asString())
+        try! print(CCPS.Sequence(from: "N>60R>5N>12R>4W>4N>118W>4R>4N>10R>8N>118R>7N>12RRN>3RR").asString(blockSize: 8))
     }
     
     override func viewDidAppear() {
@@ -427,8 +428,10 @@ class MenuViewController: NSViewController, ORSSerialPortDelegate {
             command = "CLR/"
         case .CCPS:
             guard CCPSModeSequenceTextField.stringValue != "" else { setApplianceLabel(.corruptedParameters); return }
-            let b = CCPSCustomPath.appendingPathComponent(CCPSModeSequenceTextField.stringValue + ".ccps")
             let fm = FileManager()
+            let a = CCPSCustomPath.appendingPathComponent(CCPSModeSequenceTextField.stringValue + ".mp3")
+            let b = CCPSCustomPath.appendingPathComponent(CCPSModeSequenceTextField.stringValue + ".ccps")
+            let c = CCPSCustomPath.appendingPathComponent(CCPSModeSequenceTextField.stringValue + ".png")
             if fm.fileExists(atPath: b.path) {
                 do {
                     command = "CPS<s\(try String(contentsOf: b))/"
@@ -436,14 +439,18 @@ class MenuViewController: NSViewController, ORSSerialPortDelegate {
                     setApplianceLabel(.corruptedParameters)
                     return
                 }
-                let a = CCPSCustomPath.appendingPathComponent(CCPSModeSequenceTextField.stringValue + ".mp3")
-                if fm.fileExists(atPath: a.path) {
-                    MenuViewController.player = try! AVAudioPlayer(contentsOf: a)
-                    MenuViewController.player.volume = 1.0
-                    MenuViewController.player.play()
+            } else if fm.fileExists(atPath: c.path) {
+                if let image = NSImage(contentsOf: c) {
+                    let seq = try! CCPS.Sequence(from: image)
                 }
+                command = "CLR/"
             } else {
                 command = "CPS<s\(CCPSModeSequenceTextField.stringValue)/"
+            }
+            if fm.fileExists(atPath: a.path) {
+                MenuViewController.player = try! AVAudioPlayer(contentsOf: a)
+                MenuViewController.player.volume = 1.0
+                MenuViewController.player.play()
             }
         case .clock:
             routineTimer = Timer.scheduledTimer(

@@ -7,8 +7,13 @@
 
 import Cocoa
 
+/// Hardware properties
+public class DeviceProperties {
+    static var matrixSize: (x: Int, y: Int)? = nil
+}
+
 /// Collection of different system attributes
-class SystemProperties {
+public class SystemProperties {
     
     /// The way matrix behaves
     enum Mode: Int {
@@ -38,7 +43,7 @@ class SystemProperties {
 }
 
 /// Collections of system methods
-class SystemMethods {
+public class SystemMethods {
     
     /// Safely print debug info to console
     /// - Parameter text: String to print
