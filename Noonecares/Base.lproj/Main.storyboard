@@ -1033,7 +1033,7 @@
                                     </textField>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="s1s-lw-9I5" userLabel="I">
                                         <rect key="frame" x="123" y="0.0" width="75" height="14"/>
-                                        <textFieldCell key="cell" lineBreakMode="clipping" alignment="left" title="0.3.0-beta(1)" id="QOT-ZO-OSu" userLabel="APP_VERSION_LABEL">
+                                        <textFieldCell key="cell" lineBreakMode="clipping" alignment="left" title="0.3.0" id="QOT-ZO-OSu" userLabel="APP_VERSION_LABEL">
                                             <font key="font" metaFont="systemMedium" size="11"/>
                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>

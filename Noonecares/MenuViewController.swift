@@ -66,7 +66,6 @@ class MenuViewController: NSViewController, ORSSerialPortDelegate {
     @IBAction func textModeButtonPressed(_ sender: Any) {
         setApplianceLabel(.notApplied)
         setMode(to: .text)
-        insertTextToCycleRoutine()
     }
     @IBOutlet weak var textModeTextField: NSTextField!
     @IBAction func textModeTextFieldValueChanged(_ sender: Any) {
@@ -516,7 +515,8 @@ class MenuViewController: NSViewController, ORSSerialPortDelegate {
     ///   - inserting: Whether to insert item in place
     ///   - clearing: Whether to clean the routine pre-add
     func insertTextToCycleRoutine(inserting: Bool = false, clearing: Bool = false) {
-        if routine == [RoutineStep.Clock] { routine = []; currentRoutineIndex = 0 }
+        var inserting = inserting
+        if routine == [RoutineStep.Clock] { routine = []; currentRoutineIndex = 0; inserting = true }
         var animationOut: (String, Int)? = nil
         if let animation = getTextAnimation(withDelay: false) {
             animationOut = (animation, textModeAnimationDelaySlider.integerValue)

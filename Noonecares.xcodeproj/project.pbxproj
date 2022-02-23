@@ -131,7 +131,7 @@
 				ECCDB0686F1CC04CCBD16957 /* [CP] Check Pods Manifest.lock */,
 				A8CE0F8F26A3181C003147EE /* Sources */,
 				A8CE0F9026A3181C003147EE /* Frameworks */,
-				A80B2FFF27BFD35B0097A6BD /* ShellScript */,
+				A80B2FFF27BFD35B0097A6BD /* Embed Version String */,
 				A8CE0F9126A3181C003147EE /* Resources */,
 				3C90D29A9ABF7EF22A7C708D /* [CP] Embed Pods Frameworks */,
 			);
@@ -209,7 +209,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Noonecares/Pods-Noonecares-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		A80B2FFF27BFD35B0097A6BD /* ShellScript */ = {
+		A80B2FFF27BFD35B0097A6BD /* Embed Version String */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -218,13 +218,14 @@
 			);
 			inputPaths = (
 			);
+			name = "Embed Version String";
 			outputFileListPaths = (
 			);
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Script to replace APP_VERSION_LABEL's text to current app version\nsourceFilePath=\"$PROJECT_DIR/$PROJECT_NAME/Base.lproj/Main.storyboard\"\nversionNumber=\"$MARKETING_VERSION\"\nbuildNumber=\"$CURRENT_PROJECT_VERSION\"\n\nsed -i \"\" -e \"/userLabel=\\\"APP_VERSION_LABEL\\\"/s/title=\\\"[^\\\"]*\\\"/title=\\\"$versionNumber($buildNumber)\\\"/\" \"$sourceFilePath\"\n";
+			shellScript = "# Script to replace APP_VERSION_LABEL's text to current app version\nsourceFilePath=\"$PROJECT_DIR/$PROJECT_NAME/Base.lproj/Main.storyboard\"\nversionNumber=\"$MARKETING_VERSION\"\n\nsed -i \"\" -e \"/userLabel=\\\"APP_VERSION_LABEL\\\"/s/title=\\\"[^\\\"]*\\\"/title=\\\"$versionNumber\\\"/\" \"$sourceFilePath\"\n";
 		};
 		ECCDB0686F1CC04CCBD16957 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -406,7 +407,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 9Q6UB3UBW7;
 				ENABLE_HARDENED_RUNTIME = NO;
 				INFOPLIST_FILE = Noonecares/Info.plist;
@@ -414,7 +415,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = "0.3.0-beta";
+				MARKETING_VERSION = 0.3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.Fetch.Noonecares;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -432,7 +433,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 9Q6UB3UBW7;
 				ENABLE_HARDENED_RUNTIME = NO;
 				INFOPLIST_FILE = Noonecares/Info.plist;
@@ -440,7 +441,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = "0.3.0-beta";
+				MARKETING_VERSION = 0.3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.Fetch.Noonecares;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
